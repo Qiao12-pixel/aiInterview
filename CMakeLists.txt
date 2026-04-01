@@ -14,6 +14,8 @@ include(${CMAKE_BINARY_DIR}/build/Debug/generators/conan_toolchain.cmake)
 # ==============================
 # 1. 查找 brew 安装的 Qt
 # ==============================
+set(CMAKE_AUTOMOC ON)# 保证qt链接编译通过
+set(CMAKE_AUTOUIC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network)
 
 # ==============================
@@ -41,13 +43,18 @@ find_package(CURL REQUIRED)
 find_package(ZLIB REQUIRED)
 
 # ==============================
-# 你的源文件
+# 源文件
 # ==============================
 add_executable(aiInterview
-        main.cpp
+        # testModule模块为测试模块，不参与项目构建
         testModule/webSocket.cpp
         testModule/spdlog.cpp
         testModule/test.cpp
+        src/main_qt.cpp
+        include/ui/MainWindow.h
+        src/ui/MainWindow.cpp
+        include/ui/config_dialog.h
+        src/ui/config_dialog.cpp
 )
 
 # ==============================
