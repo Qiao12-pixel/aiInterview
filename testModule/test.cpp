@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-int main() {
+/*int main() {
     std::cout << "测试feature/aiInterview分支提交" << std::endl;
     return 0;
-}
+}*/
