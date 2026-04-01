@@ -2,7 +2,7 @@
 // Created by Joe on 26-4-1.
 //
 #include <spdlog/spdlog.h>
-int main() {
+/*int main() {
     //简单使用
     spdlog::info("hello, {}", "spdlog");
     spdlog::warn("注意，这是一条警告信息");
@@ -34,4 +34,4 @@ int main() {
     spdlog::set_pattern("%+");
     spdlog::info("默认格式的日志");
     return 0;
-}
+}*/
