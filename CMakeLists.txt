@@ -47,6 +47,7 @@ add_executable(aiInterview
         main.cpp
         testModule/webSocket.cpp
         testModule/spdlog.cpp
+        testModule/test.cpp
 )
 
 # ==============================
