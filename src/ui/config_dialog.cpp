@@ -4,7 +4,7 @@
 #include "../../include/ui/config_dialog.h"
 
 #include <QVBoxLayout>
-
+#include <QFileDialog>
 namespace interview {
     namespace ui {
         ConfigDialog::ConfigDialog(QWidget *parent) : QDialog(parent){
@@ -32,7 +32,7 @@ namespace interview {
             QVBoxLayout* resume_layout = new QVBoxLayout(resume_group);
 
             m_use_resume_check_ = new QCheckBox("使用简历驱动面试", this);
-            m_use_resume_check_->setChecked(false);
+            m_use_resume_check_->setChecked(true);
             resume_layout->addWidget(m_use_resume_check_);
 
             QHBoxLayout* resume_path_layout = new QHBoxLayout();
@@ -56,10 +56,10 @@ namespace interview {
             QFormLayout* question_layout = new QFormLayout(question_group);
 
             m_questions_spin_box_ = new QSpinBox(this);
-            m_questions_spin_box_->setRange(1, 50);
-            m_questions_spin_box_->setValue(50);
+            m_questions_spin_box_->setRange(1, 10);
+            m_questions_spin_box_->setValue(10);
             m_questions_spin_box_->setSuffix(" 个");
-            question_layout->addRow("问题数量(1~50):", m_questions_spin_box_);
+            question_layout->addRow("问题数量(1~10):", m_questions_spin_box_);
 
             main_layout->addWidget(question_group);
 
@@ -67,15 +67,28 @@ namespace interview {
             QHBoxLayout* button_layout = new QHBoxLayout();
             button_layout->addStretch();
 
-            m_btn_cancel_interview_ = new QPushButton("取消", this);
-            m_btn_start_interview_ = new QPushButton("开始面试", this);
-            m_btn_start_interview_->setDefault(true);
+            m_btn_cancel_info_ = new QPushButton("取消", this);
+            m_btn_save_info_ = new QPushButton("保存并关闭", this);
+            m_btn_save_info_->setDefault(true);
 
-            button_layout->addWidget(m_btn_cancel_interview_);
-            button_layout->addWidget(m_btn_start_interview_);
+            button_layout->addWidget(m_btn_cancel_info_);
+            button_layout->addWidget(m_btn_save_info_);
 
             main_layout->addLayout(button_layout);
+
+            connect(m_btn_cancel_info_, &QPushButton::clicked, this, &QWidget::close);
+            connect(m_btn_browse_, &QPushButton::clicked, this, &ConfigDialog::GetPDFPath);
+            connect(m_btn_save_info_, &QPushButton::clicked, this, &QDialog::accept);
         }
+
+        void ConfigDialog::GetPDFPath() {
+            QString PDF_path_ = QFileDialog::getOpenFileName(this, "../resource", "*.pdf", "pdf文件(*.pdf)");
+            if (PDF_path_.isEmpty()) {
+                return;
+            }
+            m_resume_edit_->setText(PDF_path_);
+        }
+
         QString ConfigDialog::GetCandidateName() const {
             return m_name_edit_->text().trimmed();
         }
