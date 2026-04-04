@@ -41,7 +41,7 @@ find_package(nlohmann_json REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(CURL REQUIRED)
 find_package(ZLIB REQUIRED)
-
+find_package(GTest REQUIRED)
 # ==============================
 # 源文件
 # ==============================
@@ -55,6 +55,24 @@ add_executable(aiInterview
         src/ui/MainWindow.cpp
         include/ui/config_dialog.h
         src/ui/config_dialog.cpp
+        testModule/math_utils.cpp
+        testModule/math_utils.h
+        testModule/test_math_utils.cpp
+        include/interview/interview_manager.h
+        src/interview/interview_manager.cpp
+        src/interview/dialog_session.cpp
+        include/interview/dialog_session.h
+        src/services/llm_client.cpp
+        include/services/llm_client.h
+        src/services/pdf_parser.cpp
+        include/services/pdf_parser.h
+        src/common/config.cpp
+        include/common/config.h
+        src/common/logger.cpp
+        include/common/logger.h
+        include/common/utils.h
+        src/common/interview_state.cpp
+        include/common/interview_state.h
 )
 
 # ==============================
@@ -81,6 +99,9 @@ target_link_libraries(aiInterview
         spdlog::spdlog
         CURL::libcurl
         ZLIB::ZLIB
+
+        GTest::gtest
+        GTest::gtest_main
 )
 
 # ==============================

@@ -26,7 +26,8 @@ namespace interview {
             QString GetResumePath() const;
             int GetMinQuestions() const;
             bool IsUseResume() const;
-
+        private slots:
+            void GetPDFPath();
         private:
             void SetupUi();
             QLineEdit* m_name_edit_;
@@ -36,8 +37,8 @@ namespace interview {
             QPushButton* m_btn_browse_;
             QSpinBox* m_questions_spin_box_;
 
-            QPushButton* m_btn_start_interview_;
-            QPushButton* m_btn_cancel_interview_;
+            QPushButton* m_btn_save_info_;
+            QPushButton* m_btn_cancel_info_;
         };
     }
 }

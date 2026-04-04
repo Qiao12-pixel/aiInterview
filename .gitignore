@@ -40,3 +40,5 @@ logs/
 dist/
 build/
 cmake-build-debug/
+testModule/
+config/default_config.json
