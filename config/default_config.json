@@ -47,9 +47,9 @@
     "vad_speech_trigger_duration": 400
   },
   "llm": {
-    "api_url": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
-    "api_key": "10766194-c891-4c9d-9c05-7c2c21ff0cf9",
-    "model": "ep-m-20260403224907-84wn7",
+    "api_url": "",
+    "api_key": "",
+    "model": "",
     "temperature": 0.3,
     "max_tokens": 4096,
     "timeout_seconds": 120
