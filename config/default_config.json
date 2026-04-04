@@ -16,10 +16,10 @@
     }
   },
   "ws": {
-    "base_url": "wss://openspeech.bytedance.com/api/v3/realtime/dialogue",
+    "base_url": "",
     "headers": {
-      "X-Api-App-ID": "6841070965",
-      "X-Api-Access-Key": "tk7N31pCM4EIAPxj4mn8bOhhAp0D0Qz6",
+      "X-Api-App-ID": "",
+      "X-Api-Access-Key": "",
       "X-Api-Resource-Id": "volc.speech.dialog",
       "X-Api-App-Key": "PlgvMymc7f3tQnJ6",
       "X-Api-Connect-Id": ""
@@ -31,12 +31,12 @@
     "speaking_style": "说话风格：\n1. 简洁直接，每次发言控制在三句、120个字以内\n2. 朗读提示词时逐字读出技术名词和数字，不得删减或改写\n3. 对回答的反馈保持一句短评（8-15个字）\n4. 候选人表示尚未回答时，仅回复“好的，请准备后继续”\n5. 避免任何形式的知识讲解和答案提示",
     "city": "北京",
     "strict_audit": false,
-    "audit_response": "支持客户自定义安全审核回复话术。",
+    "audit_response": "",
     "recv_timeout": 10,
     "input_mod": "audio"
   },
   "tts": {
-    "speaker": "zh_male_yunzhou_jupiter_bigtts",
+    "speaker": "",
     "channel": 1,
     "format": "pcm",
     "sample_rate": 24000
