@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AI Interview</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside>
+        <div class="brand">
+          <span>AI</span>
+          <div><b>Interview</b><small>智能面试工作台</small></div>
+        </div>
+        <label for="candidateName">候选人姓名</label
+        ><input
+          id="candidateName"
+          maxlength="40"
+          placeholder="请输入姓名"
+        /><label for="questionCount">题目数量</label
+        ><select id="questionCount">
+          <option>3</option>
+          <option>5</option>
+          <option>10</option>
+        </select>
+        <button class="new" id="newSession">＋ 新建会话</button>
+        <nav>
+          <a class="active">当前面试</a>
+          <button id="report" disabled>查看本次报告</button>
+        </nav>
+        <div class="side-note">
+          <b>媒体能力</b>
+          <p>文本 / 语音 / 视频辅助<br />回答实时输出</p>
+        </div>
+      </aside>
+      <main>
+        <header>
+          <div>
+            <small class="eyebrow">LIVE INTERVIEW</small>
+            <h1 id="sessionTitle">准备开始面试</h1>
+          </div>
+          <div class="connection">
+            <i></i><span id="connectionText">等待连接</span>
+          </div>
+        </header>
+        <p id="activity" role="status"></p>
+        <section class="workspace">
+          <div class="chat panel">
+            <div class="panel-head">
+              <b>面试对话</b><span id="progress">尚未开始</span>
+            </div>
+            <div id="messages" class="messages">
+              <div class="empty">
+                <strong>欢迎使用 AI Interview</strong>
+                <p>填写姓名与题量，开始 C++ 后端技术面试。</p>
+              </div>
+            </div>
+            <form id="textForm" class="composer">
+              <textarea
+                id="textInput"
+                aria-label="面试回答"
+                placeholder="输入回答；Enter 发送，Shift+Enter 换行"
+              ></textarea>
+              <button>发送</button>
+            </form>
+          </div>
+          <div class="media panel">
+            <div class="panel-head">
+              <b>实时交互</b
+              ><select id="mode">
+                <option value="text">文本对话</option>
+                <option value="audio">语音对话</option>
+                <option value="video">视频辅助对话</option>
+              </select>
+            </div>
+            <div class="video">
+              <video
+                id="cameraPreview"
+                autoplay
+                muted
+                playsinline
+                hidden
+              ></video>
+              <div id="videoPlaceholder" class="video-placeholder">
+                <div class="video-icon">◉</div>
+                <span>摄像头未开启</span><small>点击摄像头开始预览</small>
+              </div>
+            </div>
+            <div class="media-actions">
+              <button id="mic" aria-pressed="false">开始说话</button>
+              <button id="camera" class="secondary" aria-pressed="false">
+                开启摄像头
+              </button>
+              <button id="stopSpeak" class="secondary">停止朗读</button>
+            </div>
+            <p id="mediaStatus" class="media-status" role="status">
+              语音转写后可编辑确认，再提交回答。
+            </p>
+            <label
+              ><input
+                type="checkbox"
+                id="autoSpeak"
+                checked
+              />语音模式下朗读面试官问题</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                id="attachFrame"
+              />提交时附带当前画面</label
+            >
+            <div class="protocol">
+              <b>连接协议</b>
+              <p>
+                语音通过浏览器转写后提交；摄像头可预览并选传当前帧。<br />评分和总结由服务端实时返回。
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

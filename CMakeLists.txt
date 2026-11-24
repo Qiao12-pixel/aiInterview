@@ -1,113 +1,36 @@
 cmake_minimum_required(VERSION 3.24)
-project(aiInterview)
-
-# C++ 标准
+project(aiInterview LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_OSX_ARCHITECTURES arm64)
-
-# ==============================
-# 【关键】加载 Conan 工具链
-# ==============================
-include(${CMAKE_BINARY_DIR}/build/Debug/generators/conan_toolchain.cmake)
-# message(STATUS "CMAKE_BINARY_DIR = ${CMAKE_BINARY_DIR}")
-# ==============================
-# 1. 查找 brew 安装的 Qt
-# ==============================
-set(CMAKE_AUTOMOC ON)# 保证qt链接编译通过
-set(CMAKE_AUTOUIC ON)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network)
-
-# ==============================
-# 2. 查找 brew 安装的 podofo
-# ==============================
-set(PODOFO_PREFIX /opt/homebrew/Cellar/podofo/1.0.3) # 实测路径
-
-find_path(PODOFO_INCLUDE_DIRS NAMES podofo/podofo.h PATHS ${PODOFO_PREFIX}/include NO_DEFAULT_PATH)
-find_library(PODOFO_LIBRARIES NAMES podofo PATHS ${PODOFO_PREFIX}/lib NO_DEFAULT_PATH)
-
-if(NOT PODOFO_INCLUDE_DIRS OR NOT PODOFO_LIBRARIES)
-    message(FATAL_ERROR "podofo not found in ${PODOFO_PREFIX}")
+option(BUILD_DESKTOP_CLIENT "Build Qt gRPC client" ON)
+option(BUILD_BACKEND "Build the C++ gRPC server" OFF)
+option(BUILD_PROJECT_TESTS "Build Qt transport smoke test" OFF)
+add_subdirectory(proto)
+if(BUILD_DESKTOP_CLIENT)
+    find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+    add_library(interview_client_transport client/src/transport/interview_client.cpp)
+    target_include_directories(interview_client_transport PUBLIC client/include)
+    target_link_libraries(interview_client_transport PUBLIC interview_protocol)
+    set(CLIENT_UI_SOURCES
+        client/include/ui/MainWindow.h client/include/ui/config_dialog.h
+        client/src/ui/MainWindow.cpp client/src/ui/window_navigation.cpp
+        client/src/ui/window_layout.cpp client/src/ui/session_actions.cpp
+        client/src/ui/answer_actions.cpp client/src/ui/report_actions.cpp
+        client/src/ui/config_dialog.cpp client/src/ui/config_dialog_layout.cpp)
+    add_executable(aiInterview client/src/main_qt.cpp ${CLIENT_UI_SOURCES})
+    set_target_properties(aiInterview PROPERTIES AUTOMOC ON AUTOUIC ON)
+    target_include_directories(aiInterview PRIVATE client/include)
+    target_link_libraries(aiInterview PRIVATE interview_client_transport Qt6::Core Qt6::Widgets)
+    if(BUILD_PROJECT_TESTS)
+        find_package(Qt6 REQUIRED COMPONENTS Test)
+        add_executable(client_ui_smoke client/tests/ui_smoke.cpp ${CLIENT_UI_SOURCES})
+        set_target_properties(client_ui_smoke PROPERTIES AUTOMOC ON AUTOUIC ON)
+        target_link_libraries(client_ui_smoke PRIVATE interview_client_transport Qt6::Widgets Qt6::Test)
+        add_executable(client_rpc_smoke client/tests/rpc_smoke.cpp)
+        target_link_libraries(client_rpc_smoke PRIVATE interview_client_transport)
+    endif()
 endif()
-
-
-# ==============================
-# 3. 查找 Conan 安装的其他库
-# ==============================
-find_package(Boost REQUIRED COMPONENTS system thread)
-find_package(OpenSSL REQUIRED)
-find_package(PortAudio REQUIRED)
-find_package(nlohmann_json REQUIRED)
-find_package(spdlog REQUIRED)
-find_package(CURL REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(GTest REQUIRED)
-# ==============================
-# 源文件
-# ==============================
-add_executable(aiInterview
-        # testModule模块为测试模块，不参与项目构建
-        testModule/webSocket.cpp
-        testModule/spdlog.cpp
-        testModule/test.cpp
-        src/main_qt.cpp
-        include/ui/MainWindow.h
-        src/ui/MainWindow.cpp
-        include/ui/config_dialog.h
-        src/ui/config_dialog.cpp
-        testModule/math_utils.cpp
-        testModule/math_utils.h
-        testModule/test_math_utils.cpp
-        include/interview/interview_manager.h
-        src/interview/interview_manager.cpp
-        src/interview/dialog_session.cpp
-        include/interview/dialog_session.h
-        src/services/llm_client.cpp
-        include/services/llm_client.h
-        src/services/pdf_parser.cpp
-        include/services/pdf_parser.h
-        src/common/config.cpp
-        include/common/config.h
-        src/common/logger.cpp
-        include/common/logger.h
-        include/common/utils.h
-        src/common/interview_state.cpp
-        include/common/interview_state.h
-)
-
-# ==============================
-# 链接所有库
-# ==============================
-target_link_libraries(aiInterview
-        PRIVATE
-        # Qt (brew)
-        Qt6::Core
-        Qt6::Widgets
-        Qt6::Gui
-        Qt6::Network
-
-        # podofo (brew)
-        ${PODOFO_LIBRARIES}
-
-        # Conan 安装的库
-        Boost::system
-        Boost::thread
-        OpenSSL::SSL
-        OpenSSL::Crypto
-        portaudio
-        nlohmann_json::nlohmann_json
-        spdlog::spdlog
-        CURL::libcurl
-        ZLIB::ZLIB
-
-        GTest::gtest
-        GTest::gtest_main
-)
-
-# ==============================
-# podofo 头文件路径（brew）
-# ==============================
-target_include_directories(aiInterview
-        PRIVATE
-        ${PODOFO_INCLUDE_DIRS}
-)
+if(BUILD_BACKEND)
+    include(CTest)
+    add_subdirectory(server)
+endif()

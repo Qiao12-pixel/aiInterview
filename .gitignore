@@ -41,4 +41,7 @@ dist/
 build/
 cmake-build-debug/
 testModule/
-config/default_config.json
+config/
+# Backend and gateway build outputs
+build/
+server/gateway/node_modules/
