@@ -1,0 +1,8 @@
+{
+  "nodes": 2,
+  "pending_before": 1850,
+  "documents_after": 1850,
+  "publisher_exit": 0,
+  "consumer_exit": 0,
+  "drain_seconds": 19.091412125038914
+}

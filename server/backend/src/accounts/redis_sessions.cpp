@@ -1,6 +1,7 @@
 #include "accounts/repositories.h"
 #include "accounts/crypto.h"
 #include <hiredis/hiredis.h>
+#include "infrastructure/storage/pools.h"
 namespace backend::accounts {
 namespace {
 struct ContextDelete {
@@ -17,28 +18,14 @@ struct ReplyDelete {
 };
 using Context = std::unique_ptr<redisContext, ContextDelete>;
 using Reply = std::unique_ptr<redisReply, ReplyDelete>;
-Context Connect(const Json &c) {
-    const auto host = c.value("host", std::string("127.0.0.1"));
-    timeval timeout{2, 0};
-    Context redis(redisConnectWithTimeout(host.c_str(), c.value("port", 6379), timeout));
-    if (!redis || redis->err)
-        throw Error(503, "Redis 登录服务不可用");
-    redisSetTimeout(redis.get(), timeout);
-    const auto password = c.value("password", std::string{});
-    if (!password.empty()) {
-        Reply reply(static_cast<redisReply *>(
-            redisCommand(redis.get(), "AUTH %b", password.data(), password.size())));
-        if (!reply || reply->type == REDIS_REPLY_ERROR)
-            throw Error(503, "Redis 认证失败");
-    }
-    return redis;
-}
+auto Connect(const Json &config) { return storage::RedisPool(config)->Borrow(); }
 void Check(const Reply &reply) {
     if (!reply || reply->type == REDIS_REPLY_ERROR)
         throw Error(503, "Redis 登录会话操作失败");
 }
 class Sessions final : public SessionRepository {
     Json config_;
+    std::shared_ptr<storage::Pool<redisContext>> pool_;
     std::string prefix_;
     std::string Key(const std::string &token) const {
         return prefix_ + "auth:session:" + Digest(token);
@@ -46,7 +33,7 @@ class Sessions final : public SessionRepository {
 
   public:
     explicit Sessions(Json c)
-        : config_(std::move(c)),
+        : config_(std::move(c)), pool_(storage::RedisPool(config_)),
           prefix_(config_.value("prefix", std::string("aiinterview:report:"))) {
         auto redis = Connect(config_);
         Reply reply(static_cast<redisReply *>(redisCommand(redis.get(), "PING")));

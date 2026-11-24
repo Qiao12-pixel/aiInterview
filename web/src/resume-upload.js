@@ -10,13 +10,9 @@ export async function validateResume(file) {
     throw new Error("文件内容不是有效的 PDF");
 }
 export async function encodeResume(file) {
-  if (!file) return "";
+  if (!file) return new Uint8Array();
   await validateResume(file);
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  let binary = "";
-  for (let offset = 0; offset < bytes.length; offset += 32768)
-    binary += String.fromCharCode(...bytes.subarray(offset, offset + 32768));
-  return btoa(binary);
+  return new Uint8Array(await file.arrayBuffer());
 }
 export function createResumeUpload() {
   const input = document.querySelector("#resumeFile"),

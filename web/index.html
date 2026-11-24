@@ -53,7 +53,7 @@
         </nav>
         <div class="side-note">
           <b>媒体能力</b>
-          <p>文本 / 语音 / 视频辅助<br />回答实时输出</p>
+          <p>文本 / 语音<br />回答实时输出</p>
         </div>
       </aside>
       <div id="authOverlay" class="auth-overlay" hidden>
@@ -137,27 +137,10 @@
               ><select id="mode">
                 <option value="text">文本对话</option>
                 <option value="audio">语音对话</option>
-                <option value="video">视频辅助对话</option>
               </select>
-            </div>
-            <div class="video">
-              <video
-                id="cameraPreview"
-                autoplay
-                muted
-                playsinline
-                hidden
-              ></video>
-              <div id="videoPlaceholder" class="video-placeholder">
-                <div class="video-icon">◉</div>
-                <span>摄像头未开启</span><small>点击摄像头开始预览</small>
-              </div>
             </div>
             <div class="media-actions">
               <button id="mic" aria-pressed="false">开始说话</button>
-              <button id="camera" class="secondary" aria-pressed="false">
-                开启摄像头
-              </button>
               <button id="stopSpeak" class="secondary">停止朗读</button>
             </div>
             <p id="mediaStatus" class="media-status" role="status">
@@ -170,16 +153,10 @@
                 checked
               />语音模式下朗读面试官问题</label
             >
-            <label
-              ><input
-                type="checkbox"
-                id="attachFrame"
-              />提交时附带当前画面</label
-            >
             <div class="protocol">
               <b>连接协议</b>
               <p>
-                语音通过浏览器转写后提交；摄像头可预览并选传当前帧。<br />评分和总结由服务端实时返回。
+                浏览器通过 gRPC-Web 直接调用后端；语音转写后提交。<br />评分和总结由服务端实时返回。
               </p>
             </div>
           </div>

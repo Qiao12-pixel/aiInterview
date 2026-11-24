@@ -1,5 +1,6 @@
 #include "infrastructure/storage/report_store.h"
 #include <mysql.h>
+#include "infrastructure/storage/pools.h"
 #include "infrastructure/database/bootstrap.h"
 #include "infrastructure/storage/redis_cache.h"
 #include <fstream>
@@ -24,28 +25,10 @@ struct ResultDelete {
 };
 class SqlRedisStore final : public ReportStore {
     Json mysql_, redis_;
-    std::mutex mutex_;
-    std::unique_ptr<MYSQL, MysqlDelete> Connect() {
-        std::unique_ptr<MYSQL, MysqlDelete> db(mysql_init(nullptr));
-        if (!db)
-            throw std::runtime_error("MySQL 初始化失败");
-        unsigned timeout = 5;
-        mysql_options(db.get(), MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
-        mysql_options(db.get(), MYSQL_OPT_READ_TIMEOUT, &timeout);
-        mysql_options(db.get(), MYSQL_OPT_WRITE_TIMEOUT, &timeout);
-        const auto host = mysql_.value("host", std::string("127.0.0.1"));
-        const auto user = mysql_.at("user").get<std::string>(),
-                   password = mysql_.value("password", std::string{}),
-                   database = mysql_.at("database").get<std::string>();
-        const auto socket = mysql_.value("socket", std::string{});
-        if (!mysql_real_connect(db.get(), host.c_str(), user.c_str(), password.c_str(),
-                                database.c_str(), mysql_.value("port", 3306),
-                                socket.empty() ? nullptr : socket.c_str(), 0))
-            throw std::runtime_error("MySQL 连接失败，请检查服务端 storage.mysql 配置");
-        if (mysql_set_character_set(db.get(), "utf8mb4"))
-            throw std::runtime_error("MySQL 编码设置失败");
-        return db;
-    }
+    bool events_enabled_;
+    std::shared_ptr<storage::Pool<MYSQL>> pool_;
+    std::shared_ptr<storage::Pool<redisContext>> cache_pool_;
+    storage::Pool<MYSQL>::Lease Connect() { return pool_->Borrow(); }
     std::string Quote(MYSQL *db, const std::string &text) {
         std::string escaped(text.size() * 2 + 1, '\0');
         const auto size = mysql_real_escape_string(db, escaped.data(), text.data(), text.size());
@@ -58,17 +41,19 @@ class SqlRedisStore final : public ReportStore {
     }
 
   public:
-    SqlRedisStore(Json mysql, Json redis) : mysql_(std::move(mysql)), redis_(std::move(redis)) {
+    SqlRedisStore(Json mysql, Json redis, bool events)
+        : mysql_(std::move(mysql)), redis_(std::move(redis)), events_enabled_(events),
+          pool_(storage::MysqlPool(mysql_)), cache_pool_(storage::RedisPool(redis_)) {
         auto db = Connect();
         Query(db.get(),
               "SELECT session_id, report_json, owner_user_id FROM interview_reports LIMIT 0");
+        std::unique_ptr<MYSQL_RES, ResultDelete> initial(mysql_store_result(db.get()));
         if (redis_.value("ttl_seconds", 3600) < 1)
             throw std::runtime_error("Redis TTL 必须大于 0");
     }
     void Save(const std::string &id, const Json &report) override {
         const std::string serialized = report.dump();
         {
-            std::lock_guard<std::mutex> lock(mutex_);
             auto db = Connect();
             const auto query =
                 "INSERT INTO "
@@ -79,7 +64,26 @@ class SqlRedisStore final : public ReportStore {
                 Quote(db.get(), report.value("owner_user_id", std::string{})) +
                 ") ON DUPLICATE KEY UPDATE report_json=VALUES(report_json), "
                 "candidate_name=VALUES(candidate_name), owner_user_id=VALUES(owner_user_id)";
-            Query(db.get(), query);
+            Query(db.get(), "START TRANSACTION");
+            try {
+                Query(db.get(), query);
+                if (events_enabled_) {
+                    const auto eventId = "report.completed:" + id;
+                    const auto payload =
+                        Json{{"event_id", eventId},
+                             {"type", "report.completed"},
+                             {"session_id", id},
+                             {"owner_user_id", report.value("owner_user_id", std::string{})}}
+                            .dump();
+                    Query(db.get(),
+                          "INSERT IGNORE INTO report_outbox(event_id,payload_json) VALUES(" +
+                              Quote(db.get(), eventId) + "," + Quote(db.get(), payload) + ")");
+                }
+                Query(db.get(), "COMMIT");
+            } catch (...) {
+                mysql_rollback(db.get());
+                throw;
+            }
         }
         storage::CacheReport(redis_, id, &serialized); // 缓存不可用不影响已提交的 MySQL 数据。
     }
@@ -92,7 +96,6 @@ class SqlRedisStore final : public ReportStore {
         }
         std::string serialized;
         {
-            std::lock_guard<std::mutex> lock(mutex_);
             auto db = Connect();
             Query(db.get(), "SELECT report_json FROM interview_reports WHERE session_id=" +
                                 Quote(db.get(), id));
@@ -109,7 +112,6 @@ class SqlRedisStore final : public ReportStore {
         return report;
     }
     Json List(const std::string &owner, unsigned offset) override {
-        std::lock_guard<std::mutex> lock(mutex_);
         auto db = Connect();
         Query(db.get(), "SELECT session_id,candidate_name,created_at FROM interview_reports WHERE "
                         "owner_user_id=" +
@@ -141,7 +143,8 @@ std::shared_ptr<ReportStore> OpenReportStore(const std::string &path) {
     if (!config.value("enabled", false))
         return {};
     database::Initialize(config.at("mysql"));
-    return std::make_shared<SqlRedisStore>(config.at("mysql"),
-                                           config.value("redis", Json::object()));
+    return std::make_shared<SqlRedisStore>(
+        config.at("mysql"), config.value("redis", Json::object()),
+        root.value("rabbitmq", Json::object()).value("enabled", false));
 }
 } // namespace backend

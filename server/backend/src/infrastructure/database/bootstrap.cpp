@@ -99,6 +99,22 @@ void Initialize(const nlohmann::json &config) {
       INDEX idx_report_owner_created(owner_user_id,created_at,session_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4)SQL",
           "创建报告表");
+    Query(db.get(), R"SQL(CREATE TABLE IF NOT EXISTS report_outbox (
+      event_id VARCHAR(160) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+      payload_json JSON NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      published_at TIMESTAMP NULL,
+      INDEX idx_outbox_pending(published_at,created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4)SQL",
+          "创建报告事件 Outbox");
+    Query(db.get(), R"SQL(CREATE TABLE IF NOT EXISTS report_documents (
+      event_id VARCHAR(160) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+      session_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+      document_text MEDIUMTEXT NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY idx_report_document_session(session_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4)SQL",
+          "创建异步报告文档表");
     if (!Exists(db.get(), "SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() "
                           "AND TABLE_NAME='interview_reports' AND COLUMN_NAME='owner_user_id'"))
         Query(db.get(),

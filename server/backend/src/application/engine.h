@@ -10,8 +10,10 @@
 namespace backend {
 class Engine {
   public:
-    explicit Engine(Model model, std::shared_ptr<ReportStore> reports = {})
-        : model_(std::move(model)), reports_(std::move(reports)) {}
+    explicit Engine(Model model, std::shared_ptr<ReportStore> reports = {},
+                    std::string instanceId = {})
+        : model_(std::move(model)), reports_(std::move(reports)),
+          instance_id_(std::move(instanceId)) {}
     std::optional<Json> Report(const std::string &id);
     Json ListReports(const std::string &owner, unsigned offset);
     using EventSink = std::function<void(const Event &)>;
@@ -24,6 +26,7 @@ class Engine {
 
   private:
     Model model_;
+    std::string instance_id_;
     std::shared_ptr<ReportStore> reports_;
     std::mutex mutex_;
     std::unordered_map<std::string, std::shared_ptr<Session>> sessions_;

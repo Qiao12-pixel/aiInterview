@@ -1,3 +1,4 @@
+import { accountRequest, listReports } from "./rpc/interview.js";
 export function createAccountController({ onState, onReports }) {
   let busy = false;
   const request = async (action, body = {}) => {
@@ -5,15 +6,7 @@ export function createAccountController({ onState, onReports }) {
     busy = true;
     onState({ user: account.user, busy: true });
     try {
-      const response = await fetch(`/api/account/${action}`, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok)
-        throw new Error(result.message || `HTTP ${response.status}`);
+      const result = await accountRequest(action, body);
       if (result.user) account.user = result.user;
       if (action === "logout") account.user = null;
       onState({ user: account.user });
@@ -55,16 +48,8 @@ export function createAccountController({ onState, onReports }) {
     },
     async loadReports() {
       if (!this.user) return onReports([]);
-      const response = await fetch("/api/reports", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ offset: 0 }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok)
-        throw new Error(result.message || `HTTP ${response.status}`);
-      onReports(result.reports || []);
+      const result = await listReports();
+      onReports(Array.isArray(result) ? result : result.reports || []);
     },
   };
   return account;

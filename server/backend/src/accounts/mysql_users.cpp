@@ -1,5 +1,6 @@
 #include "accounts/repositories.h"
 #include <mysql.h>
+#include "infrastructure/storage/pools.h"
 #include <fstream>
 #include <sstream>
 namespace backend::accounts {
@@ -23,43 +24,7 @@ struct ResultDelete {
     }
 };
 using Db = std::unique_ptr<MYSQL, DbDelete>;
-struct LibraryRuntime {
-    LibraryRuntime() {
-        if (mysql_library_init(0, nullptr, nullptr))
-            throw Error(503, "MySQL 客户端初始化失败");
-    }
-    ~LibraryRuntime() { mysql_library_end(); }
-};
-struct ThreadRuntime {
-    ThreadRuntime() {
-        if (mysql_thread_init())
-            throw Error(503, "MySQL 线程初始化失败");
-    }
-    ~ThreadRuntime() { mysql_thread_end(); }
-};
-Db Connect(const Json &c) {
-    static LibraryRuntime library;
-    thread_local ThreadRuntime thread;
-    Db db(mysql_init(nullptr));
-    if (!db)
-        throw Error(503, "MySQL 初始化失败");
-    unsigned timeout = 5;
-    mysql_options(db.get(), MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
-    mysql_options(db.get(), MYSQL_OPT_READ_TIMEOUT, &timeout);
-    mysql_options(db.get(), MYSQL_OPT_WRITE_TIMEOUT, &timeout);
-    const auto host = c.value("host", std::string("127.0.0.1")),
-               user = c.at("user").get<std::string>(),
-               password = c.value("password", std::string{}),
-               database = c.at("database").get<std::string>(),
-               socket = c.value("socket", std::string{});
-    if (!mysql_real_connect(db.get(), host.c_str(), user.c_str(), password.c_str(),
-                            database.c_str(), c.value("port", 3306),
-                            socket.empty() ? nullptr : socket.c_str(), 0))
-        throw Error(503, "无法连接 MySQL，请检查配置");
-    if (mysql_set_character_set(db.get(), "utf8mb4"))
-        throw Error(503, "MySQL 编码设置失败");
-    return db;
-}
+auto Connect(const Json &config) { return storage::MysqlPool(config)->Borrow(); }
 void Query(MYSQL *db, const std::string &sql) {
     if (mysql_real_query(db, sql.data(), sql.size()))
         throw Error(503, "MySQL 操作失败，请检查权限和数据库迁移");
@@ -90,9 +55,10 @@ std::unique_ptr<MYSQL_STMT, StmtDelete> Execute(MYSQL *db, const std::string &sq
 }
 class Users final : public UserRepository {
     Json config_;
+    std::shared_ptr<storage::Pool<MYSQL>> pool_;
 
   public:
-    explicit Users(Json config) : config_(std::move(config)) {
+    explicit Users(Json config) : config_(std::move(config)), pool_(storage::MysqlPool(config_)) {
         auto db = Connect(config_);
         for (const auto *sql : {"SELECT id,email,password_hash FROM users LIMIT 0",
                                 "SELECT owner_user_id FROM interview_reports LIMIT 0"}) {

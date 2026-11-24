@@ -1,0 +1,112 @@
+{
+  "model": "mock-model",
+  "cache": "Redis warm report cache",
+  "runs": [
+    {
+      "idle_websockets": 0,
+      "active_http_concurrency": 64,
+      "duration_seconds": 6.066274000040721,
+      "report_read": {
+        "attempts": 576,
+        "success": 576,
+        "errors": {},
+        "successful_per_second": 94.95120068696757,
+        "p50_ms": 28.56841596076265,
+        "p95_ms": 35.712875018361956,
+        "p99_ms": 37.285833968780935,
+        "max_ms": 38.20220904890448
+      },
+      "resources": {
+        "55624": {
+          "max_cpu_percent": 6.8,
+          "max_rss_mib": 62.03125
+        },
+        "55625": {
+          "max_cpu_percent": 10.9,
+          "max_rss_mib": 23.859375
+        }
+      }
+    },
+    {
+      "idle_websockets": 64,
+      "active_http_concurrency": 64,
+      "duration_seconds": 6.631608167022932,
+      "report_read": {
+        "attempts": 588,
+        "success": 588,
+        "errors": {},
+        "successful_per_second": 88.66627599078512,
+        "p50_ms": 22.524084022734314,
+        "p95_ms": 43.65554195828736,
+        "p99_ms": 47.82649996923283,
+        "max_ms": 49.10804197425023
+      },
+      "resources": {
+        "55624": {
+          "max_cpu_percent": 1.7,
+          "max_rss_mib": 27.90625
+        },
+        "55625": {
+          "max_cpu_percent": 3.0,
+          "max_rss_mib": 24.421875
+        }
+      }
+    },
+    {
+      "idle_websockets": 96,
+      "active_http_concurrency": 64,
+      "duration_seconds": 6.6580562079907395,
+      "report_read": {
+        "attempts": 640,
+        "success": 571,
+        "errors": {
+          "BrokenPipeError:[Errno 32] Broken pipe": 6,
+          "ConnectionResetError:[Errno 54] Connection reset by peer": 63
+        },
+        "successful_per_second": 85.76076592965798,
+        "p50_ms": 17.820834007579833,
+        "p95_ms": 32.57816703990102,
+        "p99_ms": 34.614583011716604,
+        "max_ms": 36.08400002121925
+      },
+      "resources": {
+        "55624": {
+          "max_cpu_percent": 1.6,
+          "max_rss_mib": 28.578125
+        },
+        "55625": {
+          "max_cpu_percent": 1.9,
+          "max_rss_mib": 24.875
+        }
+      }
+    },
+    {
+      "idle_websockets": 128,
+      "active_http_concurrency": 64,
+      "duration_seconds": 6.6046014170278795,
+      "report_read": {
+        "attempts": 640,
+        "success": 0,
+        "errors": {
+          "ConnectionResetError:[Errno 54] Connection reset by peer": 565,
+          "BrokenPipeError:[Errno 32] Broken pipe": 75
+        },
+        "successful_per_second": 0.0,
+        "p50_ms": 11.882708000484854,
+        "p95_ms": 19.497041997965425,
+        "p99_ms": 31.801124976482242,
+        "max_ms": 33.17733301082626
+      },
+      "resources": {
+        "55624": {
+          "max_cpu_percent": 0.6,
+          "max_rss_mib": 27.84375
+        },
+        "55625": {
+          "max_cpu_percent": 0.3,
+          "max_rss_mib": 24.953125
+        }
+      }
+    }
+  ]
+}
