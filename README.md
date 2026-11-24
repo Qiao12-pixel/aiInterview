@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AI Interview
 
 C++ 智能面试系统，按桌面端、网页和解耦的服务端模块分块。
@@ -19,3 +20,4 @@ C++ 智能面试系统，按桌面端、网页和解耦的服务端模块分块�
 详细本地构建与运行见 [startup.md](startup.md)，模块职责见 [架构说明](docs/ARCHITECTURE.md) 与 [WebSocket 协议](docs/WEBSOCKET_API.md)。
 
 Qt 和网页共用同一服务端。Qt 已支持原生 gRPC（含 TLS）与 PDF 上传；网页尚无简历上传控件。账号、持久化及音视频交互尚未实现。
+
