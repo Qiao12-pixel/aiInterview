@@ -2,7 +2,10 @@
 export async function streamRequest(path, payload, onMessage, signal) {
   const response = await fetch(path, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+    },
     body: JSON.stringify(payload),
     signal,
   });
@@ -37,5 +40,7 @@ export async function streamRequest(path, payload, onMessage, signal) {
   }
 }
 
-export const streamAnswer=(payload,onMessage,signal)=>streamRequest("/api/answer",payload,onMessage,signal);
-export const streamReport=(payload,onMessage,signal)=>streamRequest("/api/report",payload,onMessage,signal);
+export const streamAnswer = (payload, onMessage, signal) =>
+  streamRequest("/api/answer", payload, onMessage, signal);
+export const streamReport = (payload, onMessage, signal) =>
+  streamRequest("/api/report", payload, onMessage, signal);

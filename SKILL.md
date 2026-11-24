@@ -20,4 +20,8 @@
 - 日志需脱敏，禁止输出 API key、简历全文和完整回答。
 - 新增行为应补充对应的单元或集成测试。
 
-- server/gateway 只适配协议，业务决策位于 server/src/application；应用层依赖端口，具体 LLM/PDF 实现位于 infrastructure。
+- server/gateway 只适配协议，业务决策位于 server/backend/src/application；应用层依赖端口，具体 LLM/PDF 实现位于 infrastructure。
+
+- 服务端网关统一使用 C++17/Boost.Beast，不引入 Node.js 服务端。模块头文件和实现放在同一 src/ 子目录。
+
+- 网关仅转发 HTTP/WebSocket/SSE 与 gRPC，不连接或初始化数据库，不保存用户登录态或实现账号业务。账号、密码和 Redis/MySQL 在 server/backend/src/accounts 和后端 infrastructure。

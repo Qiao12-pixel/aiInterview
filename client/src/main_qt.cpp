@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include "ui/MainWindow.h"
+#include "account/account_dialog.h"
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     QApplication::setApplicationName("AI Interview");
@@ -12,6 +13,8 @@ int main(int argc, char *argv[]) {
                       qEnvironmentVariable("AIINTERVIEW_SERVER", "127.0.0.1:50051")});
     parser.addOption({"tls", "使用 TLS 连接服务端"});
     parser.addOption({"ca", "可选 CA PEM 文件；默认使用系统信任证书", "file"});
+    parser.addOption({"account-api", "账号 HTTP API 地址", "url",
+                      qEnvironmentVariable("AIINTERVIEW_ACCOUNT_API", "http://127.0.0.1:8888")});
     parser.process(app);
     QString roots;
     if (parser.isSet("ca")) {
@@ -26,7 +29,11 @@ int main(int argc, char *argv[]) {
         }
         roots = QString::fromUtf8(file.readAll());
     }
-    interview::ui::MainWindow window(parser.value("server"), parser.isSet("tls"), roots);
+    interview::account::AccountDialog login(parser.value("account-api"));
+    if (login.exec() != QDialog::Accepted)
+        return 0;
+    interview::ui::MainWindow window(parser.value("server"), parser.isSet("tls"), roots,
+                                     login.accessToken());
     window.show();
     return app.exec();
 }

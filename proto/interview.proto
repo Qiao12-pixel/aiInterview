@@ -47,6 +47,7 @@ message InterviewEvent {
     SUMMARY = 5;
     ERROR = 6;
     DELTA = 7;
+    SESSION_READY = 8;
   }
   Type type = 1;
   string session_id = 2;
@@ -60,11 +61,18 @@ message ReportResponse {
   string session_id = 1;
   string report_json = 2;
 }
+message ListReportsRequest { uint32 offset = 1; }
+message ListReportsResponse { string reports_json = 1; }
 
+message AccountRequest { string operation = 1; string body_json = 2; string source = 3; }
+message AccountResponse { string result_json = 1; }
 service InterviewService {
+  rpc Account(AccountRequest) returns (AccountResponse);
   rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+  rpc StartInterview(CreateSessionRequest) returns (stream InterviewEvent);
   rpc SendText(TextMessage) returns (stream InterviewEvent);
   rpc StreamAudio(stream AudioChunk) returns (stream InterviewEvent);
   rpc StreamVideo(stream VideoFrame) returns (stream InterviewEvent);
   rpc GetReport(ReportRequest) returns (ReportResponse);
+  rpc ListReports(ListReportsRequest) returns (ListReportsResponse);
 }

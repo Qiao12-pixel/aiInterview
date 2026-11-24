@@ -1,7 +1,7 @@
 //
 // Created by Joe on 26-4-1.
 //
-#include "../../include/ui/config_dialog.h"
+#include "ui/config_dialog.h"
 
 #include <QVBoxLayout>
 #include <QFileDialog>

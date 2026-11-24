@@ -24,9 +24,31 @@
           <option>5</option>
           <option>10</option>
         </select>
+        <div class="resume-upload">
+          <label for="resumeFile">简历（可选）</label>
+          <input
+            id="resumeFile"
+            type="file"
+            accept=".pdf,application/pdf"
+            aria-describedby="resumeStatus"
+          />
+          <div class="resume-info">
+            <small id="resumeStatus" role="status">可选 PDF，最大 5 MiB</small
+            ><button id="clearResume" type="button" disabled>移除</button>
+          </div>
+        </div>
         <button class="new" id="newSession">＋ 新建会话</button>
+        <button class="account-button" id="accountButton">登录 / 注册</button>
+        <div class="history">
+          <b>最近面试</b>
+          <div id="reportHistory" class="history-items">
+            <small>登录后查看历史报告</small>
+          </div>
+        </div>
         <nav>
-          <a class="active">当前面试</a>
+          <button id="currentInterview" class="active" type="button">
+            当前面试
+          </button>
           <button id="report" disabled>查看本次报告</button>
         </nav>
         <div class="side-note">
@@ -34,6 +56,50 @@
           <p>文本 / 语音 / 视频辅助<br />回答实时输出</p>
         </div>
       </aside>
+      <div id="authOverlay" class="auth-overlay" hidden>
+        <form id="authForm" class="auth-card">
+          <button
+            id="closeAuth"
+            class="auth-close"
+            type="button"
+            aria-label="关闭"
+          >
+            ×
+          </button>
+          <h2>欢迎回来</h2>
+          <p id="authHint">登录后同步保存你的面试记录。</p>
+          <label
+            >邮箱<input
+              id="authEmail"
+              type="email"
+              required
+              maxlength="254"
+              autocomplete="email"
+          /></label>
+          <label
+            >昵称<input
+              id="authName"
+              maxlength="80"
+              autocomplete="nickname"
+              placeholder="仅注册时填写"
+              hidden
+          /></label>
+          <label
+            >密码<input
+              id="authPassword"
+              type="password"
+              required
+              minlength="10"
+              maxlength="128"
+              autocomplete="current-password"
+          /></label>
+          <div id="authError" role="alert"></div>
+          <button id="authSubmit" class="new">登录</button>
+          <button id="authToggle" class="auth-toggle" type="button">
+            创建新账号
+          </button>
+        </form>
+      </div>
       <main>
         <header>
           <div>

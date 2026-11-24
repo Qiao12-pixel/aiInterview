@@ -1,0 +1,71 @@
+export function createAccountController({ onState, onReports }) {
+  let busy = false;
+  const request = async (action, body = {}) => {
+    if (busy) throw new Error("账号请求处理中");
+    busy = true;
+    onState({ user: account.user, busy: true });
+    try {
+      const response = await fetch(`/api/account/${action}`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok)
+        throw new Error(result.message || `HTTP ${response.status}`);
+      if (result.user) account.user = result.user;
+      if (action === "logout") account.user = null;
+      onState({ user: account.user });
+      return result;
+    } finally {
+      busy = false;
+      onState({ user: account.user, busy: false });
+    }
+  };
+  const account = {
+    user: null,
+    async restore() {
+      try {
+        await request("me");
+        await this.loadReports();
+      } catch {
+        this.user = null;
+        onState({ user: null });
+        onReports([]);
+      }
+    },
+    async register(email, password, display_name) {
+      const result = await request("register", {
+        email,
+        password,
+        display_name,
+      });
+      await this.loadReports();
+      return result;
+    },
+    async login(email, password) {
+      const result = await request("login", { email, password });
+      await this.loadReports();
+      return result;
+    },
+    async logout() {
+      await request("logout");
+      onReports([]);
+    },
+    async loadReports() {
+      if (!this.user) return onReports([]);
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offset: 0 }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok)
+        throw new Error(result.message || `HTTP ${response.status}`);
+      onReports(result.reports || []);
+    },
+  };
+  return account;
+}
