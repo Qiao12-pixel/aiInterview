@@ -1,23 +1,42 @@
-# C++ 面试后端
+# 服务端
 
-唯一的业务实现，不依赖 Qt 或客户端源码。入口 `src/api/main.cpp`，会话状态和业务编排位于 `src/application/engine.cpp`，模型适配器与 PDF 解析位于 `src/infrastructure/`。接口和生成目标来自 `../proto/`。
+server 是服务端集合，不代表单个进程。两个子项目按运行职责并列：
 
-已实现：创建会话、PDF 简历驱动出题、文本回答、结构化评分、每题最多一次追问和最终报告。评分与总结支持 JSON SSE 增量事件；视频辅助请求最多携带一张 JPEG 帧，只有客户端明确勾选时才上传。不会保存原始媒体。
+| 目录 | 用途 | 启动产物 |
+| --- | --- | --- |
+| `backend/` | 业务后端：账号、面试、LLM、PDF、MySQL/Redis | `interview_server` |
+| `gateway/` | 协议网关：HTTP/WebSocket/SSE 与 gRPC 转发 | `interview_gateway` |
+| `config/` | 后端私有运行配置，含模型及数据库凭据 | 不单独运行 |
 
-浏览器语音转写通过 Web Speech API，由用户确认文本后提交；问题朗读使用浏览器 Speech Synthesis，摄像头仅在本地预览。该实现不是连续实时音视频通话，完整 RTC/ASR/TTS 流尚未接入。模型参数仅从服务端 JSON 配置读取。`--mock` 可离线验证 RPC 和 PDF 解析。
+网关不读取 backend 的数据库配置、不连接 MySQL/Redis、不建表。只有业务后端访问数据与外部模型。
 
-依赖：C++17、CMake、gRPC/Protobuf、libcurl、nlohmann_json、pkg-config、poppler-cpp。PDF 解析已由原客户端 PoDoFo 实现替换为 Poppler C++，支持 Linux 和 macOS。
+## 一起构建
 
-构建、测试和网关启动见项目根目录 `startup.md`。
+在项目根目录执行：
 
-## 服务端目录
+```bash
+cmake -S server -B build/server -DBUILD_CPP_GATEWAY=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/server --parallel 2
+ctest --test-dir build/server --output-on-failure
+```
 
-- `src/api`：gRPC 接入与依赖组装
-- `src/application`：业务用例与状态流转
-- `include/interview/domain`：会话与事件数据
-- `include/interview/ports`：业务依赖的模型接口
-- `src/infrastructure`：模型 HTTP、PDF 等具体适配器
-- `gateway`：独立 Node.js 网关进程
-- `config`：服务端模型配置，仅后端读取
+原有常用启动路径保留：
 
-应用层不链接 HTTP、PDF 或 gRPC 库。网关通过契约访问 API，不导入 C++ 实现；Qt 和 Web 不依赖任何服务端源码。
+```bash
+./build/server/interview_server --config server/config/default_config.json
+# 另一个终端：
+./build/server/gateway/interview_gateway
+```
+
+## 独立构建
+
+```bash
+cmake -S server/backend -B build/backend
+cmake --build build/backend --parallel 2
+cmake -S server/gateway -B build/gateway
+cmake --build build/gateway --parallel 2
+```
+
+独立构建时产物分别为 `build/backend/interview_server` 和 `build/gateway/interview_gateway`。
+
+[本地启动](../startup.md) · [项目目录](../docs/PROJECT_STRUCTURE.md) · [后端模块](backend/README.md) · [网关模块](gateway/README.md)

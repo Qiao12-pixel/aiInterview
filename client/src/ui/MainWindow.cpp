@@ -5,9 +5,11 @@
 #include <QJsonObject>
 #include <QTimer>
 namespace interview::ui {
-MainWindow::MainWindow(const QString &server, bool tls, const QString &roots, QWidget *parent)
-    : QMainWindow(parent), rpc_(std::make_unique<transport::InterviewClient>(
-                               server.toStdString(), tls, roots.toStdString())),
+MainWindow::MainWindow(const QString &server, bool tls, const QString &roots,
+                       const QString &authToken, QWidget *parent)
+    : QMainWindow(parent),
+      rpc_(std::make_unique<transport::InterviewClient>(
+          server.toStdString(), tls, roots.toStdString(), authToken.toStdString())),
       endpoint_(server), candidate_name_("候选人"), min_question_(10) {
     setMenuBar(new QMenuBar(this));
     SetupUi();

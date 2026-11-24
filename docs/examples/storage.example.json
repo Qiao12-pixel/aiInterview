@@ -1,0 +1,23 @@
+{
+  "storage": {
+    "enabled": true,
+    "mysql": {
+      "host": "127.0.0.1",
+      "port": 3306,
+      "user": "aiinterview",
+      "password": "替换为数据库密码",
+      "database": "aiinterview"
+    },
+    "redis": {
+      "enabled": true,
+      "host": "127.0.0.1",
+      "port": 6379,
+      "password": "",
+      "prefix": "aiinterview:",
+      "ttl_seconds": 3600
+    },
+    "accounts": {
+      "session_ttl_seconds": 604800
+    }
+  }
+}

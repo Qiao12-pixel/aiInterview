@@ -39,3 +39,15 @@
 ```
 
 错误是当前请求的终止消息，不保证随后还有 `done`。会话重启、断线恢复和请求去重未实现；不可自动重放已提交回答。媒体帧暂不接受，未来新增带序号/时间戳的二进制消息协议。
+
+## Web 创建会话及简历上传
+
+网页新建会话使用 `POST /api/sessions`（同源登录 Cookie）。JSON 字段为 candidate_name、question_total 和可选 resume_pdf（PDF 原始字节的 Base64，原始文件最大 5 MiB）。请求体最大 7 MiB，成功返回 session、first_question、session_token。网关转为同一 CreateSession gRPC，避免现有 64 KiB WebSocket 消息限额限制简历。原 WebSocket create_session 仍可用于无简历调用。
+
+### 首题 SSE
+
+`POST /api/sessions` 指定 `Accept: text/event-stream` 时，响应依次包含 status、若干 event/DELTA（json_payload.target=QUESTION）、session、event/QUESTION、done。生成失败返回 error 而不返回成功 done。草稿不代表会话已经可回答，必须等待正式 session 和 QUESTION。
+
+链路为模型 SSE → C++ StartInterview gRPC 服务端流 → 网关 SSE → 浏览器；不是前端定时拆字。JSON 兼容模式在没有 SSE Accept 头时保留。
+
+网关已迁移为 C++，API、WebSocket 消息及 SSE 事件结构保持兼容；源码与参数见 server/gateway/README.md。

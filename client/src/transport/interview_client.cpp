@@ -12,9 +12,12 @@ class InterviewClient::Impl {
     std::mutex mutex;
     std::shared_ptr<grpc::ClientContext> current;
     bool stopping = false;
+    std::string auth_token;
     std::shared_ptr<grpc::ClientContext> Context() {
         auto ctx = std::make_shared<grpc::ClientContext>();
         ctx->set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(150));
+        if (!auth_token.empty())
+            ctx->AddMetadata("authorization", "Bearer " + auth_token);
         std::lock_guard<std::mutex> lock(mutex);
         current = ctx;
         if (stopping)
@@ -31,12 +34,14 @@ class InterviewClient::Impl {
                                      status.error_message());
     }
 };
-InterviewClient::InterviewClient(const std::string &target, bool tls, const std::string &roots)
+InterviewClient::InterviewClient(const std::string &target, bool tls, const std::string &roots,
+                                 const std::string &authToken)
     : impl_(std::make_unique<Impl>()) {
     grpc::SslCredentialsOptions options;
     options.pem_root_certs = roots;
     grpc::ChannelArguments args;
     args.SetMaxReceiveMessageSize(8 * 1024 * 1024);
+    impl_->auth_token = authToken;
     impl_->stub = rpc::InterviewService::NewStub(grpc::CreateCustomChannel(
         target, tls ? grpc::SslCredentials(options) : grpc::InsecureChannelCredentials(), args));
 }

@@ -19,6 +19,19 @@ export function createConnection({ onMessage, onState }) {
   return {
     connect,
     open: () => socket?.readyState === WebSocket.OPEN,
+    reset() {
+      if (socket) {
+        socket.onclose = null;
+        socket.onmessage = null;
+        socket.close();
+      }
+      connect();
+    },
+    disconnect() {
+      if (socket) {
+        socket.close();
+      }
+    },
     reconnect() {
       if (!socket || socket.readyState === WebSocket.CLOSED) connect();
     },

@@ -1,3 +1,5 @@
+> 历史复盘：本文记录最初 Qt 单体版，文中的 include/ 路径和本地业务流程已迁移。当前目录与启动方式以 docs/ARCHITECTURE.md、startup.md 为准。
+
 # AI Interview 项目面试复盘
 
 ## 1. 项目一句话

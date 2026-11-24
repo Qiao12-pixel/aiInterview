@@ -1,13 +1,15 @@
 # Web 前端
 
-Web 使用原生 HTML、CSS、ES Modules，不需打包。网关提供静态文件和 API：
+浏览器使用原生 HTML/CSS/ES Modules，无需打包。网页静态资源及账号、简历、WebSocket/SSE 接口都由 C++ 网关提供，不需要运行 npm 或独立静态服务器。
 
-- `connection.js`：WebSocket 会话创建
-- `session-controller.js`：页面状态和操作协调
-- `messages.js`：对话 DOM 渲染及 SSE 草稿更新
-- `sse.js`：Fetch SSE 分帧解码
-- `voice.js` / `camera.js`：语音识别与本地摄像头预览
+```bash
+./build/server/gateway/interview_gateway
+```
 
-目前提供语音转写并确认后提交、浏览器语音朗读，以及显式勾选后上传一张 JPEG 画面用于面试回答辅助。**这不是连续实时语音/视频通话**：原始音频、视频不持续上传，未保存媒体。完整双向音视频还需 ASR/TTS/RTC 流接入。
+打开 http://127.0.0.1:8888，后端 gRPC 服务和 MySQL/Redis 需同时运行，完整构建/启动见根目录 startup.md。
 
-启动命令见项目根目录 `startup.md`。
+模块：connection（WebSocket）、session-controller（状态与交互）、messages（气泡）、sse（SSE 解码）、resume-upload/session-api（PDF）、account-controller/account-panel（账号与历史）、voice/camera/media-controller（浏览器媒体辅助）。
+
+语音由浏览器转写后确认提交，题目可朗读；摄像头本地预览，勾选时随回答上传单张 JPEG。这不是连续实时 RTC 音视频通话。简历仅支持 5 MiB、20 页以内可提取文字的 PDF，扫描件不支持 OCR。
+
+历史报告使用 report-model.js/report-view.js 转为原问答顺序的对话回顾，显示每轮评分、综合评分与建议，隐藏内部 ID 和原始 JSON。历史只读；切换时保存当前会话气泡、滚动位置和输入草稿，点击“当前面试”恢复。旧报告若未保存逐轮问答会明确提示，不虚构记录。测试：`node --test web/tests/report-view.test.js`（Node 仅为可选测试工具，运行服务不依赖它）。

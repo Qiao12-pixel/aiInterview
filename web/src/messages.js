@@ -23,6 +23,17 @@ export function createMessages(container) {
   }
   return {
     add,
+    capture() {
+      return {
+        nodes: Array.from(container.childNodes),
+        scrollTop: container.scrollTop,
+      };
+    },
+    restore(snapshot) {
+      previews.clear();
+      container.replaceChildren(...snapshot.nodes);
+      container.scrollTop = snapshot.scrollTop;
+    },
     reset() {
       container.replaceChildren();
       previews.clear();
@@ -34,7 +45,11 @@ export function createMessages(container) {
         el = add(
           "assistant",
           text,
-          target === "SUMMARY" ? "面试总结" : "回答评价",
+          target === "SUMMARY"
+            ? "面试总结"
+            : target === "QUESTION"
+              ? "AI 面试官"
+              : "回答评价",
         );
         el.classList.add("streaming");
         previews.set(target, el);

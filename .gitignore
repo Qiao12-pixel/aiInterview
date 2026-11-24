@@ -44,4 +44,3 @@ testModule/
 config/
 # Backend and gateway build outputs
 build/
-server/gateway/node_modules/
