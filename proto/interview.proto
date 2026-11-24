@@ -1,0 +1,70 @@
+syntax = "proto3";
+package aiinterview.v1;
+
+message Session {
+  string id = 1;
+  string candidate_name = 2;
+  string status = 3;
+  uint32 question_index = 4;
+  uint32 question_total = 5;
+}
+message CreateSessionRequest {
+  string candidate_name = 1;
+  // 原始 PDF 字节，由服务端解析；可选，最大 5 MiB。
+  bytes resume_pdf = 2;
+  uint32 question_total = 3;
+}
+message CreateSessionResponse {
+  Session session = 1;
+  InterviewEvent first_question = 2;
+}
+message TextMessage {
+  string session_id = 1;
+  string text = 2;
+  int64 client_time_ms = 3;
+  // 用户显式选择上传的当前画面，不持久化。
+  bytes video_jpeg = 4;
+}
+message AudioChunk {
+  string session_id = 1;
+  bytes pcm16 = 2;
+  uint32 sample_rate = 3;
+  uint32 channels = 4;
+  bool end_of_turn = 5;
+}
+message VideoFrame {
+  string session_id = 1;
+  bytes jpeg = 2;
+  uint64 timestamp_ms = 3;
+}
+message InterviewEvent {
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    QUESTION = 1;
+    TRANSCRIPT = 2;
+    FEEDBACK = 3;
+    FOLLOW_UP = 4;
+    SUMMARY = 5;
+    ERROR = 6;
+    DELTA = 7;
+  }
+  Type type = 1;
+  string session_id = 2;
+  string text = 3;
+  string json_payload = 4;
+}
+message ReportRequest {
+  string session_id = 1;
+}
+message ReportResponse {
+  string session_id = 1;
+  string report_json = 2;
+}
+
+service InterviewService {
+  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+  rpc SendText(TextMessage) returns (stream InterviewEvent);
+  rpc StreamAudio(stream AudioChunk) returns (stream InterviewEvent);
+  rpc StreamVideo(stream VideoFrame) returns (stream InterviewEvent);
+  rpc GetReport(ReportRequest) returns (ReportResponse);
+}
