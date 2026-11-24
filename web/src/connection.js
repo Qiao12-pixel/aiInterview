@@ -1,46 +1,38 @@
-export function createConnection({ onMessage, onState }) {
-  let socket;
-  function connect() {
+// A health check, not a persistent socket. Each RPC owns its response stream.
+export function createConnection({ onState }) {
+  let ready = false,
+    revision = 0;
+  async function connect() {
+    const current = ++revision;
     onState("connecting");
-    socket = new WebSocket(
-      `${location.protocol === "https:" ? "wss:" : "ws:"}//${location.host}/ws`,
-    );
-    socket.onopen = () => onState("open");
-    socket.onclose = () => onState("closed");
-    socket.onerror = () => onState("error");
-    socket.onmessage = ({ data }) => {
-      try {
-        onMessage(JSON.parse(data));
-      } catch {
-        onMessage({ type: "error", message: "服务器消息格式错误" });
+    try {
+      const response = await fetch("/healthz", {
+        cache: "no-store",
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!response.ok) throw Error();
+      const health = await response.json();
+      if (health.transport !== "grpc-web") throw Error();
+      if (current === revision) {
+        ready = true;
+        onState("open");
       }
-    };
+    } catch {
+      if (current === revision) {
+        ready = false;
+        onState("error");
+      }
+    }
   }
   return {
     connect,
-    open: () => socket?.readyState === WebSocket.OPEN,
-    reset() {
-      if (socket) {
-        socket.onclose = null;
-        socket.onmessage = null;
-        socket.close();
-      }
-      connect();
-    },
+    open: () => ready,
+    reset: connect,
+    reconnect: connect,
     disconnect() {
-      if (socket) {
-        socket.close();
-      }
-    },
-    reconnect() {
-      if (!socket || socket.readyState === WebSocket.CLOSED) connect();
-    },
-    send(type, fields = {}) {
-      if (socket?.readyState !== WebSocket.OPEN)
-        throw new Error("连接已断开，请重新连接");
-      socket.send(
-        JSON.stringify({ type, request_id: crypto.randomUUID(), ...fields }),
-      );
+      revision++;
+      ready = false;
+      onState("closed");
     },
   };
 }

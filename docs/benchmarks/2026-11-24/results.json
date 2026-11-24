@@ -1,0 +1,1550 @@
+{
+  "environment": {
+    "utc": "2026-11-24T08:43:06.828905+00:00",
+    "cpu_logical": "10",
+    "memory_bytes": "17179869184",
+    "build": "Release",
+    "model": "mock-model",
+    "client": "Python standard library ThreadPool for HTTP; native C++ threads for gRPC",
+    "database": "isolated random MySQL schema; real Redis/RabbitMQ/ZooKeeper",
+    "existing_user_services": "left running; resource contention possible",
+    "cpu_brand": "Apple M5",
+    "compiler": "Apple clang 21.0.0",
+    "cmake": "4.2.3",
+    "source_commit": "0caed4a plus uncommitted middleware implementation",
+    "redis": "8.8.0",
+    "rabbitmq": "4.4.0",
+    "grpc_native_note": "all native measurements target node-0 only, including two-node topology; not aggregate throughput"
+  },
+  "runs": [
+    {
+      "topology_nodes": 1,
+      "concurrency": 1,
+      "cycles": 100,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 22.931833,
+          "p50_ms": 8.819709,
+          "p95_ms": 11.183291,
+          "p99_ms": 22.931833,
+          "success": 100
+        },
+        "concurrency": 1,
+        "count": 100,
+        "create": {
+          "errors": [],
+          "max_ms": 1.344208,
+          "p50_ms": 0.262833,
+          "p95_ms": 0.383541,
+          "p99_ms": 1.344208,
+          "success": 100
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 23.6185,
+          "p50_ms": 9.562583,
+          "p95_ms": 11.866916,
+          "p99_ms": 23.6185,
+          "success": 100
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.771375,
+          "p50_ms": 0.429375,
+          "p95_ms": 0.611292,
+          "p99_ms": 0.771375,
+          "success": 100
+        },
+        "seconds": 0.976966291,
+        "successful_cycles_per_second": 102.35767694465929
+      },
+      "direct_resources": {
+        "51424": {
+          "max_cpu_percent": 45.7,
+          "max_rss_mib": 59.4375
+        },
+        "51427": {
+          "max_cpu_percent": 0.2,
+          "max_rss_mib": 17.109375
+        }
+      },
+      "http_seconds": 7.181564500031527,
+      "http_cycle": {
+        "attempts": 100,
+        "success": 100,
+        "errors": {},
+        "successful_per_second": 13.924542486468095,
+        "p50_ms": 71.72912504756823,
+        "p95_ms": 75.34091698471457,
+        "p99_ms": 75.48766600666568,
+        "max_ms": 94.99900002265349
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 13.924542486468095,
+          "p50_ms": 26.08045795932412,
+          "p95_ms": 26.93983301287517,
+          "p99_ms": 28.07570801815018,
+          "max_ms": 28.332334011793137
+        },
+        "answer": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 13.924542486468095,
+          "p50_ms": 36.42424999270588,
+          "p95_ms": 40.78700003447011,
+          "p99_ms": 42.507957958150655,
+          "max_ms": 42.634749959688634
+        },
+        "report": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 13.924542486468095,
+          "p50_ms": 9.366750018671155,
+          "p95_ms": 14.925208000931889,
+          "p99_ms": 15.872957999818027,
+          "max_ms": 26.870957983192056
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 24.770124990027398
+        },
+        "answer": {
+          "p50_ms": 23.387291003018618
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "51424": {
+          "max_cpu_percent": 28.0,
+          "max_rss_mib": 27.890625
+        },
+        "51427": {
+          "max_cpu_percent": 5.0,
+          "max_rss_mib": 20.59375
+        }
+      },
+      "distribution": {
+        "node-0": 100
+      }
+    },
+    {
+      "topology_nodes": 1,
+      "concurrency": 8,
+      "cycles": 100,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 80.01125,
+          "p50_ms": 69.931833,
+          "p95_ms": 77.600958,
+          "p99_ms": 80.01125,
+          "success": 100
+        },
+        "concurrency": 8,
+        "count": 100,
+        "create": {
+          "errors": [],
+          "max_ms": 1.477292,
+          "p50_ms": 0.230375,
+          "p95_ms": 1.410083,
+          "p99_ms": 1.477292,
+          "success": 100
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 80.580875,
+          "p50_ms": 70.750041,
+          "p95_ms": 78.187584,
+          "p99_ms": 80.580875,
+          "success": 100
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.652583,
+          "p50_ms": 0.405542,
+          "p95_ms": 0.634792,
+          "p99_ms": 0.652583,
+          "success": 100
+        },
+        "seconds": 0.888539166,
+        "successful_cycles_per_second": 112.5442792242655
+      },
+      "direct_resources": {
+        "51572": {
+          "max_cpu_percent": 49.7,
+          "max_rss_mib": 61.8125
+        },
+        "51575": {
+          "max_cpu_percent": 0.0,
+          "max_rss_mib": 19.09375
+        }
+      },
+      "http_seconds": 1.0219371249550022,
+      "http_cycle": {
+        "attempts": 100,
+        "success": 100,
+        "errors": {},
+        "successful_per_second": 97.85337821483213,
+        "p50_ms": 72.76770798489451,
+        "p95_ms": 99.68608303461224,
+        "p99_ms": 101.23916697921231,
+        "max_ms": 122.97941697761416
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 97.85337821483213,
+          "p50_ms": 23.336665995884687,
+          "p95_ms": 26.33308299118653,
+          "p99_ms": 26.838333054911345,
+          "max_ms": 26.863542036153376
+        },
+        "answer": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 97.85337821483213,
+          "p50_ms": 40.0041249813512,
+          "p95_ms": 56.14699999568984,
+          "p99_ms": 88.99595902767032,
+          "max_ms": 97.93008398264647
+        },
+        "report": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 97.85337821483213,
+          "p50_ms": 12.819333001971245,
+          "p95_ms": 25.034916994627565,
+          "p99_ms": 26.316791016142815,
+          "max_ms": 26.607041945680976
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 21.540499990805984
+        },
+        "answer": {
+          "p50_ms": 21.45724999718368
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "51572": {
+          "max_cpu_percent": 4.4,
+          "max_rss_mib": 61.953125
+        },
+        "51575": {
+          "max_cpu_percent": 14.0,
+          "max_rss_mib": 22.578125
+        }
+      },
+      "distribution": {
+        "node-0": 100
+      }
+    },
+    {
+      "topology_nodes": 1,
+      "concurrency": 32,
+      "cycles": 100,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 293.452042,
+          "p50_ms": 272.740667,
+          "p95_ms": 290.342958,
+          "p99_ms": 293.452042,
+          "success": 100
+        },
+        "concurrency": 32,
+        "count": 100,
+        "create": {
+          "errors": [],
+          "max_ms": 3.497625,
+          "p50_ms": 0.255,
+          "p95_ms": 3.367833,
+          "p99_ms": 3.497625,
+          "success": 100
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 297.10125,
+          "p50_ms": 273.3415,
+          "p95_ms": 290.892958,
+          "p99_ms": 297.10125,
+          "success": 100
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.692125,
+          "p50_ms": 0.36075,
+          "p95_ms": 0.612125,
+          "p99_ms": 0.692125,
+          "success": 100
+        },
+        "seconds": 0.879585417,
+        "successful_cycles_per_second": 113.68992489787946
+      },
+      "direct_resources": {
+        "51624": {
+          "max_cpu_percent": 43.0,
+          "max_rss_mib": 63.859375
+        },
+        "51625": {
+          "max_cpu_percent": 0.0,
+          "max_rss_mib": 19.125
+        }
+      },
+      "http_seconds": 0.9374781670048833,
+      "http_cycle": {
+        "attempts": 100,
+        "success": 100,
+        "errors": {},
+        "successful_per_second": 106.66915083418588,
+        "p50_ms": 281.90966602414846,
+        "p95_ms": 303.1275419634767,
+        "p99_ms": 309.80250000720844,
+        "max_ms": 328.2057089963928
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 106.66915083418588,
+          "p50_ms": 25.35366703523323,
+          "p95_ms": 34.26024998771027,
+          "p99_ms": 36.045457993168384,
+          "max_ms": 36.780624999664724
+        },
+        "answer": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 106.66915083418588,
+          "p50_ms": 244.2312499624677,
+          "p95_ms": 267.43237499613315,
+          "p99_ms": 269.7720419964753,
+          "max_ms": 275.6080419640057
+        },
+        "report": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 106.66915083418588,
+          "p50_ms": 13.17987497895956,
+          "p95_ms": 24.191749980673194,
+          "p99_ms": 26.437416032422334,
+          "max_ms": 26.701874972786754
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 23.579125001560897
+        },
+        "answer": {
+          "p50_ms": 21.124333958141506
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "51624": {
+          "max_cpu_percent": 6.8,
+          "max_rss_mib": 63.953125
+        },
+        "51625": {
+          "max_cpu_percent": 14.7,
+          "max_rss_mib": 23.921875
+        }
+      },
+      "distribution": {
+        "node-0": 100
+      }
+    },
+    {
+      "topology_nodes": 1,
+      "concurrency": 64,
+      "cycles": 128,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 585.830833,
+          "p50_ms": 556.53875,
+          "p95_ms": 583.300792,
+          "p99_ms": 585.792959,
+          "success": 128
+        },
+        "concurrency": 64,
+        "count": 128,
+        "create": {
+          "errors": [],
+          "max_ms": 5.750167,
+          "p50_ms": 2.4805,
+          "p95_ms": 5.580417,
+          "p99_ms": 5.748,
+          "success": 128
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 591.9615,
+          "p50_ms": 557.461959,
+          "p95_ms": 583.847916,
+          "p99_ms": 586.41125,
+          "success": 128
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.666708,
+          "p50_ms": 0.387208,
+          "p95_ms": 0.595042,
+          "p99_ms": 0.639167,
+          "success": 128
+        },
+        "seconds": 1.154325292,
+        "successful_cycles_per_second": 110.88728704733258
+      },
+      "direct_resources": {
+        "51675": {
+          "max_cpu_percent": 41.0,
+          "max_rss_mib": 66.109375
+        },
+        "51676": {
+          "max_cpu_percent": 0.1,
+          "max_rss_mib": 19.109375
+        }
+      },
+      "http_seconds": 1.190003167022951,
+      "http_cycle": {
+        "attempts": 128,
+        "success": 128,
+        "errors": {},
+        "successful_per_second": 107.56273894650175,
+        "p50_ms": 538.2059590192512,
+        "p95_ms": 580.3316250094213,
+        "p99_ms": 626.2112500262447,
+        "max_ms": 627.1164169884287
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 128,
+          "success": 128,
+          "errors": {},
+          "successful_per_second": 107.56273894650175,
+          "p50_ms": 29.28337501361966,
+          "p95_ms": 52.467333036474884,
+          "p99_ms": 55.209250014740974,
+          "max_ms": 56.00600002799183
+        },
+        "answer": {
+          "attempts": 128,
+          "success": 128,
+          "errors": {},
+          "successful_per_second": 107.56273894650175,
+          "p50_ms": 499.93070802884176,
+          "p95_ms": 529.5345000340603,
+          "p99_ms": 551.1284579988569,
+          "max_ms": 561.8297920445912
+        },
+        "report": {
+          "attempts": 128,
+          "success": 128,
+          "errors": {},
+          "successful_per_second": 107.56273894650175,
+          "p50_ms": 13.990249950438738,
+          "p95_ms": 24.317540985066444,
+          "p99_ms": 25.72049997979775,
+          "max_ms": 26.05845802463591
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 29.624334012623876
+        },
+        "answer": {
+          "p50_ms": 23.421166988555342
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "51675": {
+          "max_cpu_percent": 12.5,
+          "max_rss_mib": 34.5
+        },
+        "51676": {
+          "max_cpu_percent": 14.8,
+          "max_rss_mib": 26.125
+        }
+      },
+      "distribution": {
+        "node-0": 128
+      }
+    },
+    {
+      "topology_nodes": 1,
+      "concurrency": 128,
+      "cycles": 256,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 1165.444833,
+          "p50_ms": 1142.102875,
+          "p95_ms": 1163.230625,
+          "p99_ms": 1164.421792,
+          "success": 256
+        },
+        "concurrency": 128,
+        "count": 256,
+        "create": {
+          "errors": [],
+          "max_ms": 11.290792,
+          "p50_ms": 2.572708,
+          "p95_ms": 10.076167,
+          "p99_ms": 10.524958,
+          "success": 256
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 1166.10975,
+          "p50_ms": 1144.254708,
+          "p95_ms": 1163.869208,
+          "p99_ms": 1165.489,
+          "success": 256
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.708292,
+          "p50_ms": 0.371584,
+          "p95_ms": 0.622625,
+          "p99_ms": 0.662083,
+          "success": 256
+        },
+        "seconds": 2.309628625,
+        "successful_cycles_per_second": 110.84033044489998
+      },
+      "direct_resources": {
+        "51726": {
+          "max_cpu_percent": 45.8,
+          "max_rss_mib": 71.953125
+        },
+        "51728": {
+          "max_cpu_percent": 0.0,
+          "max_rss_mib": 19.140625
+        }
+      },
+      "http_seconds": 2.249378166976385,
+      "http_cycle": {
+        "attempts": 256,
+        "success": 256,
+        "errors": {},
+        "successful_per_second": 113.80923126150697,
+        "p50_ms": 1056.7997920443304,
+        "p95_ms": 1107.5908329803497,
+        "p99_ms": 1129.9179579946212,
+        "max_ms": 1157.3714999831282
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 256,
+          "success": 256,
+          "errors": {},
+          "successful_per_second": 113.80923126150697,
+          "p50_ms": 30.405999976210296,
+          "p95_ms": 72.63570901704952,
+          "p99_ms": 77.25649996427819,
+          "max_ms": 84.14279203861952
+        },
+        "answer": {
+          "attempts": 256,
+          "success": 256,
+          "errors": {},
+          "successful_per_second": 113.80923126150697,
+          "p50_ms": 1021.2170419981703,
+          "p95_ms": 1063.8060829951428,
+          "p99_ms": 1071.2417080067098,
+          "max_ms": 1073.1585000175983
+        },
+        "report": {
+          "attempts": 256,
+          "success": 256,
+          "errors": {},
+          "successful_per_second": 113.80923126150697,
+          "p50_ms": 13.51862499723211,
+          "p95_ms": 24.196584010496736,
+          "p99_ms": 26.233124954160303,
+          "max_ms": 27.001250011380762
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 24.03662499273196
+        },
+        "answer": {
+          "p50_ms": 22.62308297213167
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "51726": {
+          "max_cpu_percent": 16.5,
+          "max_rss_mib": 40.65625
+        },
+        "51728": {
+          "max_cpu_percent": 18.8,
+          "max_rss_mib": 29.984375
+        }
+      },
+      "distribution": {
+        "node-0": 256
+      }
+    },
+    {
+      "topology_nodes": 1,
+      "concurrency": 160,
+      "cycles": 320,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 1451.557584,
+          "p50_ms": 1401.040459,
+          "p95_ms": 1439.53575,
+          "p99_ms": 1442.971333,
+          "success": 320
+        },
+        "concurrency": 160,
+        "count": 320,
+        "create": {
+          "errors": [],
+          "max_ms": 12.1025,
+          "p50_ms": 0.774083,
+          "p95_ms": 11.591958,
+          "p99_ms": 11.966375,
+          "success": 320
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 1463.554125,
+          "p50_ms": 1401.942209,
+          "p95_ms": 1440.45375,
+          "p99_ms": 1444.048125,
+          "success": 320
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 6.913167,
+          "p50_ms": 0.390458,
+          "p95_ms": 0.613208,
+          "p99_ms": 0.684125,
+          "success": 320
+        },
+        "seconds": 2.87850225,
+        "successful_cycles_per_second": 111.16892474202513
+      },
+      "direct_resources": {
+        "51832": {
+          "max_cpu_percent": 44.0,
+          "max_rss_mib": 72.203125
+        },
+        "51833": {
+          "max_cpu_percent": 0.0,
+          "max_rss_mib": 19.078125
+        }
+      },
+      "http_seconds": 1.2274015420116484,
+      "http_cycle": {
+        "attempts": 320,
+        "success": 129,
+        "errors": {
+          "create:ConnectionResetError:[Errno 54] Connection reset by peer": 123,
+          "create:BrokenPipeError:[Errno 32] Broken pipe": 20,
+          "create:OSError:[Errno 22] Invalid argument": 4,
+          "create:RemoteDisconnected:Remote end closed connection without response": 6,
+          "BrokenPipeError:[Errno 32] Broken pipe": 21,
+          "ConnectionResetError:[Errno 54] Connection reset by peer": 16,
+          "RemoteDisconnected:Remote end closed connection without response": 1
+        },
+        "successful_per_second": 105.10007979016842,
+        "p50_ms": 65.75454102130607,
+        "p95_ms": 1077.6584999985062,
+        "p99_ms": 1144.7187919984572,
+        "max_ms": 1169.664583983831
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 320,
+          "success": 167,
+          "errors": {
+            "ConnectionResetError:[Errno 54] Connection reset by peer": 123,
+            "BrokenPipeError:[Errno 32] Broken pipe": 20,
+            "OSError:[Errno 22] Invalid argument": 4,
+            "RemoteDisconnected:Remote end closed connection without response": 6
+          },
+          "successful_per_second": 136.05979321672964,
+          "p50_ms": 39.73904100712389,
+          "p95_ms": 92.6751249935478,
+          "p99_ms": 97.89787500631064,
+          "max_ms": 99.41991697996855
+        },
+        "answer": {
+          "attempts": 167,
+          "success": 132,
+          "errors": {
+            "BrokenPipeError:[Errno 32] Broken pipe": 21,
+            "ConnectionResetError:[Errno 54] Connection reset by peer": 13,
+            "RemoteDisconnected:Remote end closed connection without response": 1
+          },
+          "successful_per_second": 107.54426769226535,
+          "p50_ms": 407.2125419625081,
+          "p95_ms": 1041.8205000460148,
+          "p99_ms": 1069.5695420145057,
+          "max_ms": 1073.545167047996
+        },
+        "report": {
+          "attempts": 132,
+          "success": 129,
+          "errors": {
+            "ConnectionResetError:[Errno 54] Connection reset by peer": 3
+          },
+          "successful_per_second": 105.10007979016842,
+          "p50_ms": 13.150917016901076,
+          "p95_ms": 24.75291700102389,
+          "p99_ms": 25.882249989081174,
+          "max_ms": 34.26508296979591
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 38.94404100719839
+        },
+        "answer": {
+          "p50_ms": 33.21366698946804
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "51832": {
+          "max_cpu_percent": 28.3,
+          "max_rss_mib": 39.34375
+        },
+        "51833": {
+          "max_cpu_percent": 32.6,
+          "max_rss_mib": 30.0625
+        }
+      },
+      "distribution": {
+        "node-0": 167
+      }
+    },
+    {
+      "topology_nodes": 2,
+      "concurrency": 1,
+      "cycles": 100,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 30.177083,
+          "p50_ms": 9.431625,
+          "p95_ms": 13.7865,
+          "p99_ms": 30.177083,
+          "success": 100
+        },
+        "concurrency": 1,
+        "count": 100,
+        "create": {
+          "errors": [],
+          "max_ms": 1.14525,
+          "p50_ms": 0.263459,
+          "p95_ms": 0.384125,
+          "p99_ms": 1.14525,
+          "success": 100
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 30.879416,
+          "p50_ms": 10.197959,
+          "p95_ms": 14.470333,
+          "p99_ms": 30.879416,
+          "success": 100
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.715375,
+          "p50_ms": 0.449041,
+          "p95_ms": 0.631917,
+          "p99_ms": 0.715375,
+          "success": 100
+        },
+        "seconds": 1.061070459,
+        "successful_cycles_per_second": 94.24444828503137
+      },
+      "direct_resources": {
+        "52155": {
+          "max_cpu_percent": 39.8,
+          "max_rss_mib": 61.0625
+        },
+        "52156": {
+          "max_cpu_percent": 9.1,
+          "max_rss_mib": 59.828125
+        },
+        "52159": {
+          "max_cpu_percent": 0.1,
+          "max_rss_mib": 19.171875
+        }
+      },
+      "http_seconds": 7.184445958992001,
+      "http_cycle": {
+        "attempts": 100,
+        "success": 100,
+        "errors": {},
+        "successful_per_second": 13.918957783354292,
+        "p50_ms": 71.9914169749245,
+        "p95_ms": 75.20416600164026,
+        "p99_ms": 75.49679203657433,
+        "max_ms": 75.54904196877033
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 13.918957783354292,
+          "p50_ms": 25.937583995983005,
+          "p95_ms": 26.82920900406316,
+          "p99_ms": 31.446792010683566,
+          "max_ms": 33.61912502441555
+        },
+        "answer": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 13.918957783354292,
+          "p50_ms": 35.97541700582951,
+          "p95_ms": 39.85066601308063,
+          "p99_ms": 41.64566699182615,
+          "max_ms": 44.57766696577892
+        },
+        "report": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 13.918957783354292,
+          "p50_ms": 10.608416981995106,
+          "p95_ms": 14.132875017821789,
+          "p99_ms": 14.895125001203269,
+          "max_ms": 15.789041004609317
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 24.676250002812594
+        },
+        "answer": {
+          "p50_ms": 23.253083985764533
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "52155": {
+          "max_cpu_percent": 23.2,
+          "max_rss_mib": 61.203125
+        },
+        "52156": {
+          "max_cpu_percent": 10.6,
+          "max_rss_mib": 60.765625
+        },
+        "52159": {
+          "max_cpu_percent": 4.9,
+          "max_rss_mib": 22.109375
+        }
+      },
+      "distribution": {
+        "node-0": 50,
+        "node-1": 50
+      }
+    },
+    {
+      "topology_nodes": 2,
+      "concurrency": 8,
+      "cycles": 100,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 80.772083,
+          "p50_ms": 68.833166,
+          "p95_ms": 78.594125,
+          "p99_ms": 80.772083,
+          "success": 100
+        },
+        "concurrency": 8,
+        "count": 100,
+        "create": {
+          "errors": [],
+          "max_ms": 1.393709,
+          "p50_ms": 0.219,
+          "p95_ms": 1.349625,
+          "p99_ms": 1.393709,
+          "success": 100
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 81.29725,
+          "p50_ms": 69.587542,
+          "p95_ms": 79.172583,
+          "p99_ms": 81.29725,
+          "success": 100
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.664375,
+          "p50_ms": 0.353125,
+          "p95_ms": 0.600125,
+          "p99_ms": 0.664375,
+          "success": 100
+        },
+        "seconds": 0.884784709,
+        "successful_cycles_per_second": 113.02184472991385
+      },
+      "direct_resources": {
+        "52303": {
+          "max_cpu_percent": 50.9,
+          "max_rss_mib": 61.578125
+        },
+        "52306": {
+          "max_cpu_percent": 9.1,
+          "max_rss_mib": 59.703125
+        },
+        "52307": {
+          "max_cpu_percent": 0.2,
+          "max_rss_mib": 19.25
+        }
+      },
+      "http_seconds": 0.9518639580346644,
+      "http_cycle": {
+        "attempts": 100,
+        "success": 100,
+        "errors": {},
+        "successful_per_second": 105.05702958484984,
+        "p50_ms": 74.44950001081452,
+        "p95_ms": 94.468625029549,
+        "p99_ms": 95.28529195813462,
+        "max_ms": 95.55166703648865
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 105.05702958484984,
+          "p50_ms": 25.611374992877245,
+          "p95_ms": 26.41925000352785,
+          "p99_ms": 26.86529199127108,
+          "max_ms": 27.13779197074473
+        },
+        "answer": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 105.05702958484984,
+          "p50_ms": 34.97179102851078,
+          "p95_ms": 46.74375004833564,
+          "p99_ms": 55.23283302318305,
+          "max_ms": 56.20300001464784
+        },
+        "report": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 105.05702958484984,
+          "p50_ms": 13.995125016663224,
+          "p95_ms": 24.187915958464146,
+          "p99_ms": 26.07437502592802,
+          "max_ms": 27.127625013235956
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 23.78404198680073
+        },
+        "answer": {
+          "p50_ms": 23.09920795960352
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "52303": {
+          "max_cpu_percent": 2.6,
+          "max_rss_mib": 61.46875
+        },
+        "52306": {
+          "max_cpu_percent": 2.4,
+          "max_rss_mib": 61.046875
+        },
+        "52307": {
+          "max_cpu_percent": 16.7,
+          "max_rss_mib": 22.6875
+        }
+      },
+      "distribution": {
+        "node-1": 50,
+        "node-0": 50
+      }
+    },
+    {
+      "topology_nodes": 2,
+      "concurrency": 32,
+      "cycles": 100,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 314.019417,
+          "p50_ms": 277.948125,
+          "p95_ms": 311.231625,
+          "p99_ms": 314.019417,
+          "success": 100
+        },
+        "concurrency": 32,
+        "count": 100,
+        "create": {
+          "errors": [],
+          "max_ms": 3.253958,
+          "p50_ms": 0.232042,
+          "p95_ms": 3.089291,
+          "p99_ms": 3.253958,
+          "success": 100
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 317.529708,
+          "p50_ms": 278.518917,
+          "p95_ms": 311.843833,
+          "p99_ms": 317.529708,
+          "success": 100
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.757666,
+          "p50_ms": 0.353584,
+          "p95_ms": 0.591208,
+          "p99_ms": 0.757666,
+          "success": 100
+        },
+        "seconds": 0.910921875,
+        "successful_cycles_per_second": 109.778898437366
+      },
+      "direct_resources": {
+        "52355": {
+          "max_cpu_percent": 41.4,
+          "max_rss_mib": 63.875
+        },
+        "52356": {
+          "max_cpu_percent": 9.1,
+          "max_rss_mib": 59.78125
+        },
+        "52359": {
+          "max_cpu_percent": 0.1,
+          "max_rss_mib": 19.296875
+        }
+      },
+      "http_seconds": 0.5225741250324063,
+      "http_cycle": {
+        "attempts": 100,
+        "success": 100,
+        "errors": {},
+        "successful_per_second": 191.3604122550054,
+        "p50_ms": 141.53641602024436,
+        "p95_ms": 191.4629999664612,
+        "p99_ms": 212.0787079911679,
+        "max_ms": 212.93141599744558
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 191.3604122550054,
+          "p50_ms": 24.39020900055766,
+          "p95_ms": 37.58779203053564,
+          "p99_ms": 38.518208952154964,
+          "max_ms": 38.603207969572395
+        },
+        "answer": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 191.3604122550054,
+          "p50_ms": 103.45458402298391,
+          "p95_ms": 141.34224998997524,
+          "p99_ms": 158.12074998393655,
+          "max_ms": 181.73141696024686
+        },
+        "report": {
+          "attempts": 100,
+          "success": 100,
+          "errors": {},
+          "successful_per_second": 191.3604122550054,
+          "p50_ms": 15.479291963856667,
+          "p95_ms": 25.219500006642193,
+          "p99_ms": 26.805208006408066,
+          "max_ms": 26.824708038475364
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 22.695083054713905
+        },
+        "answer": {
+          "p50_ms": 20.975082996301353
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "52355": {
+          "max_cpu_percent": 3.3,
+          "max_rss_mib": 63.375
+        },
+        "52356": {
+          "max_cpu_percent": 4.5,
+          "max_rss_mib": 61.59375
+        },
+        "52359": {
+          "max_cpu_percent": 21.2,
+          "max_rss_mib": 24.109375
+        }
+      },
+      "distribution": {
+        "node-0": 50,
+        "node-1": 50
+      }
+    },
+    {
+      "topology_nodes": 2,
+      "concurrency": 64,
+      "cycles": 128,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 574.836375,
+          "p50_ms": 526.704708,
+          "p95_ms": 572.019041,
+          "p99_ms": 572.862792,
+          "success": 128
+        },
+        "concurrency": 64,
+        "count": 128,
+        "create": {
+          "errors": [],
+          "max_ms": 5.931042,
+          "p50_ms": 2.260334,
+          "p95_ms": 5.774416,
+          "p99_ms": 5.924375,
+          "success": 128
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 575.576625,
+          "p50_ms": 528.23775,
+          "p95_ms": 572.73575,
+          "p99_ms": 575.349125,
+          "success": 128
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.677416,
+          "p50_ms": 0.397833,
+          "p95_ms": 0.594084,
+          "p99_ms": 0.670875,
+          "success": 128
+        },
+        "seconds": 1.1125305,
+        "successful_cycles_per_second": 115.05302551255897
+      },
+      "direct_resources": {
+        "52391": {
+          "max_cpu_percent": 41.8,
+          "max_rss_mib": 66.5
+        },
+        "52403": {
+          "max_cpu_percent": 7.6,
+          "max_rss_mib": 59.75
+        },
+        "52408": {
+          "max_cpu_percent": 0.1,
+          "max_rss_mib": 19.265625
+        }
+      },
+      "http_seconds": 0.6044619159656577,
+      "http_cycle": {
+        "attempts": 128,
+        "success": 128,
+        "errors": {},
+        "successful_per_second": 211.75858498134443,
+        "p50_ms": 260.99454099312425,
+        "p95_ms": 317.53633299376816,
+        "p99_ms": 340.70083301048726,
+        "max_ms": 342.71008300129324
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 128,
+          "success": 128,
+          "errors": {},
+          "successful_per_second": 211.75858498134443,
+          "p50_ms": 26.48108301218599,
+          "p95_ms": 37.11637499509379,
+          "p99_ms": 40.5991249717772,
+          "max_ms": 42.53412497928366
+        },
+        "answer": {
+          "attempts": 128,
+          "success": 128,
+          "errors": {},
+          "successful_per_second": 211.75858498134443,
+          "p50_ms": 219.95312499348074,
+          "p95_ms": 266.53641695156693,
+          "p99_ms": 294.0599169814959,
+          "max_ms": 294.4292080355808
+        },
+        "report": {
+          "attempts": 128,
+          "success": 128,
+          "errors": {},
+          "successful_per_second": 211.75858498134443,
+          "p50_ms": 14.862790994811803,
+          "p95_ms": 23.69708300102502,
+          "p99_ms": 25.772958993911743,
+          "max_ms": 26.835791999474168
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 20.50916600273922
+        },
+        "answer": {
+          "p50_ms": 21.014333004131913
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "52391": {
+          "max_cpu_percent": 5.3,
+          "max_rss_mib": 63.828125
+        },
+        "52403": {
+          "max_cpu_percent": 4.9,
+          "max_rss_mib": 60.84375
+        },
+        "52408": {
+          "max_cpu_percent": 17.9,
+          "max_rss_mib": 25.671875
+        }
+      },
+      "distribution": {
+        "node-0": 64,
+        "node-1": 64
+      }
+    },
+    {
+      "topology_nodes": 2,
+      "concurrency": 128,
+      "cycles": 256,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 1172.45075,
+          "p50_ms": 1147.460209,
+          "p95_ms": 1170.511167,
+          "p99_ms": 1171.558958,
+          "success": 256
+        },
+        "concurrency": 128,
+        "count": 256,
+        "create": {
+          "errors": [],
+          "max_ms": 10.536417,
+          "p50_ms": 1.884042,
+          "p95_ms": 9.961292,
+          "p99_ms": 10.427542,
+          "success": 256
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 1173.041625,
+          "p50_ms": 1149.24275,
+          "p95_ms": 1171.194,
+          "p99_ms": 1172.41825,
+          "success": 256
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 0.726042,
+          "p50_ms": 0.371125,
+          "p95_ms": 0.619,
+          "p99_ms": 0.689584,
+          "success": 256
+        },
+        "seconds": 2.321289209,
+        "successful_cycles_per_second": 110.28354373399407
+      },
+      "direct_resources": {
+        "52443": {
+          "max_cpu_percent": 45.4,
+          "max_rss_mib": 71.296875
+        },
+        "52444": {
+          "max_cpu_percent": 9.1,
+          "max_rss_mib": 59.859375
+        },
+        "52456": {
+          "max_cpu_percent": 0.1,
+          "max_rss_mib": 19.25
+        }
+      },
+      "http_seconds": 1.1111924580181949,
+      "http_cycle": {
+        "attempts": 256,
+        "success": 256,
+        "errors": {},
+        "successful_per_second": 230.3831331402073,
+        "p50_ms": 503.0953749665059,
+        "p95_ms": 553.3745000138879,
+        "p99_ms": 597.0091670169495,
+        "max_ms": 598.4424999915063
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 256,
+          "success": 256,
+          "errors": {},
+          "successful_per_second": 230.3831331402073,
+          "p50_ms": 28.512832999695092,
+          "p95_ms": 85.88841703021899,
+          "p99_ms": 93.67995901266113,
+          "max_ms": 97.20200003357604
+        },
+        "answer": {
+          "attempts": 256,
+          "success": 256,
+          "errors": {},
+          "successful_per_second": 230.3831331402073,
+          "p50_ms": 459.06058297259733,
+          "p95_ms": 480.44441698584706,
+          "p99_ms": 492.3129589878954,
+          "max_ms": 500.02708297688514
+        },
+        "report": {
+          "attempts": 256,
+          "success": 256,
+          "errors": {},
+          "successful_per_second": 230.3831331402073,
+          "p50_ms": 14.28179198410362,
+          "p95_ms": 24.118624976836145,
+          "p99_ms": 30.07520898245275,
+          "max_ms": 30.79616598552093
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 36.92745900480077
+        },
+        "answer": {
+          "p50_ms": 22.250792011618614
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "52443": {
+          "max_cpu_percent": 13.2,
+          "max_rss_mib": 37.84375
+        },
+        "52444": {
+          "max_cpu_percent": 12.2,
+          "max_rss_mib": 64.53125
+        },
+        "52456": {
+          "max_cpu_percent": 34.3,
+          "max_rss_mib": 29.859375
+        }
+      },
+      "distribution": {
+        "node-0": 128,
+        "node-1": 128
+      }
+    },
+    {
+      "topology_nodes": 2,
+      "concurrency": 160,
+      "cycles": 320,
+      "direct_grpc": {
+        "answer": {
+          "errors": [],
+          "max_ms": 1522.039958,
+          "p50_ms": 1423.947042,
+          "p95_ms": 1515.480041,
+          "p99_ms": 1521.201167,
+          "success": 320
+        },
+        "concurrency": 160,
+        "count": 320,
+        "create": {
+          "errors": [],
+          "max_ms": 13.398791,
+          "p50_ms": 2.049875,
+          "p95_ms": 12.680583,
+          "p99_ms": 13.209709,
+          "success": 320
+        },
+        "cycle": {
+          "errors": [],
+          "max_ms": 1522.868125,
+          "p50_ms": 1427.255208,
+          "p95_ms": 1516.066208,
+          "p99_ms": 1522.026125,
+          "success": 320
+        },
+        "report": {
+          "errors": [],
+          "max_ms": 3.526708,
+          "p50_ms": 0.37925,
+          "p95_ms": 0.617083,
+          "p99_ms": 0.732041,
+          "success": 320
+        },
+        "seconds": 2.939591708,
+        "successful_cycles_per_second": 108.85865514218548
+      },
+      "direct_resources": {
+        "52525": {
+          "max_cpu_percent": 45.6,
+          "max_rss_mib": 74.28125
+        },
+        "52526": {
+          "max_cpu_percent": 9.7,
+          "max_rss_mib": 59.828125
+        },
+        "52528": {
+          "max_cpu_percent": 0.1,
+          "max_rss_mib": 19.296875
+        }
+      },
+      "http_seconds": 0.7327551250346005,
+      "http_cycle": {
+        "attempts": 320,
+        "success": 133,
+        "errors": {
+          "create:BrokenPipeError:[Errno 32] Broken pipe": 3,
+          "ConnectionResetError:[Errno 54] Connection reset by peer": 102,
+          "BrokenPipeError:[Errno 32] Broken pipe": 9,
+          "create:ConnectionResetError:[Errno 54] Connection reset by peer": 72,
+          "create:RemoteDisconnected:Remote end closed connection without response": 1
+        },
+        "successful_per_second": 181.5067482383283,
+        "p50_ms": 106.12324997782707,
+        "p95_ms": 556.1236250214279,
+        "p99_ms": 600.1882079872303,
+        "max_ms": 627.8533330187201
+      },
+      "http_stages": {
+        "create": {
+          "attempts": 320,
+          "success": 244,
+          "errors": {
+            "BrokenPipeError:[Errno 32] Broken pipe": 3,
+            "ConnectionResetError:[Errno 54] Connection reset by peer": 72,
+            "RemoteDisconnected:Remote end closed connection without response": 1
+          },
+          "successful_per_second": 332.9898238357301,
+          "p50_ms": 36.756415967829525,
+          "p95_ms": 71.5592919732444,
+          "p99_ms": 82.25325000239536,
+          "max_ms": 93.10645802179351
+        },
+        "answer": {
+          "attempts": 244,
+          "success": 162,
+          "errors": {
+            "ConnectionResetError:[Errno 54] Connection reset by peer": 75,
+            "BrokenPipeError:[Errno 32] Broken pipe": 7
+          },
+          "successful_per_second": 221.0834076286405,
+          "p50_ms": 185.00054202741012,
+          "p95_ms": 483.4909169585444,
+          "p99_ms": 516.9072090066038,
+          "max_ms": 533.4717499790713
+        },
+        "report": {
+          "attempts": 162,
+          "success": 133,
+          "errors": {
+            "BrokenPipeError:[Errno 32] Broken pipe": 2,
+            "ConnectionResetError:[Errno 54] Connection reset by peer": 27
+          },
+          "successful_per_second": 181.5067482383283,
+          "p50_ms": 13.245749985799193,
+          "p95_ms": 25.330540956929326,
+          "p99_ms": 27.781042037531734,
+          "max_ms": 29.871042002923787
+        }
+      },
+      "first_delta": {
+        "create": {
+          "p50_ms": 29.398082988336682
+        },
+        "answer": {
+          "p50_ms": 31.141707964707166
+        },
+        "report": {
+          "p50_ms": null
+        }
+      },
+      "resources": {
+        "52525": {
+          "max_cpu_percent": 15.3,
+          "max_rss_mib": 40.0
+        },
+        "52526": {
+          "max_cpu_percent": 14.3,
+          "max_rss_mib": 32.484375
+        },
+        "52528": {
+          "max_cpu_percent": 27.0,
+          "max_rss_mib": 30.046875
+        }
+      },
+      "distribution": {
+        "node-0": 122,
+        "node-1": 122
+      }
+    }
+  ]
+}

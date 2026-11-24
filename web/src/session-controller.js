@@ -1,7 +1,7 @@
 import { createMessages } from "./messages.js";
 import { renderReport } from "./report-view.js";
 import { createConnection } from "./connection.js";
-import { streamAnswer, streamReport } from "./sse.js";
+import { streamAnswer, streamReport } from "./rpc/interview.js";
 import { createMedia } from "./media-controller.js";
 import { createAccountController } from "./account-controller.js";
 import { createAccountPanel } from "./account-panel.js";
@@ -138,10 +138,10 @@ export function startInterview() {
     onState: (state) => {
       const label = $("#connectionText");
       label.textContent = {
-        open: "网关已连接",
+        open: "后端可用 · gRPC-Web",
         connecting: "连接中",
         closed: "连接断开 · 点击重连",
-        error: "无法连接网关",
+        error: "无法连接后端",
       }[state];
       label.previousElementSibling.style.background =
         state === "open" ? "#42c88a" : "#e58c6a";
@@ -218,25 +218,17 @@ export function startInterview() {
       return;
     }
     if (!session) return;
-    let frame;
-    try {
-      frame = media.snapshot();
-    } catch (error) {
-      messages.add("error", error.message);
-      return;
-    }
     media.stopListening();
     busy = true;
     abort = new AbortController();
     controls();
-    messages.add("candidate", text + (frame ? "\n[已附带当前画面]" : ""));
+    messages.add("candidate", text);
     input.value = "";
     try {
       await streamAnswer(
         {
           session_id: session.id,
           text,
-          video_jpeg: frame,
         },
         handle,
         abort.signal,

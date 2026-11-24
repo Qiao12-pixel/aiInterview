@@ -32,6 +32,15 @@ std::shared_ptr<Session> Engine::Create(const std::string &candidate, unsigned c
     }
     s->current = s->questions[0]["question"];
     std::lock_guard<std::mutex> lock(mutex_);
+    const auto now = std::chrono::steady_clock::now();
+    for (auto it = sessions_.begin(); it != sessions_.end();) {
+        // Only prune entries with no outstanding reader/answer; active work remains owned.
+        if (it->second.use_count() == 1 && (now - it->second->accessed > std::chrono::hours(2) ||
+                                            (reports_ && it->second->completed)))
+            it = sessions_.erase(it);
+        else
+            ++it;
+    }
     if (sessions_.size() >= 1000)
         throw std::runtime_error("会话容量已满，请稍后重试");
     do {
@@ -39,7 +48,7 @@ std::shared_ptr<Session> Engine::Create(const std::string &candidate, unsigned c
         std::ostringstream id;
         for (int i = 0; i < 4; ++i)
             id << std::hex << std::setw(8) << std::setfill('0') << random();
-        s->id = id.str();
+        s->id = (instance_id_.empty() ? std::string{} : instance_id_ + "_") + id.str();
     } while (sessions_.count(s->id));
     sessions_[s->id] = s;
     return s;
@@ -47,6 +56,9 @@ std::shared_ptr<Session> Engine::Create(const std::string &candidate, unsigned c
 std::shared_ptr<Session> Engine::Find(const std::string &id) {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = sessions_.find(id);
-    return it == sessions_.end() ? nullptr : it->second;
+    if (it == sessions_.end())
+        return nullptr;
+    it->second->accessed = std::chrono::steady_clock::now();
+    return it->second;
 }
 } // namespace backend

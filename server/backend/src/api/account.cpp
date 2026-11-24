@@ -1,7 +1,7 @@
 #include "api/service.h"
 namespace backend::api {
 namespace rpc = aiinterview::v1;
-grpc::Status Service::Account(grpc::ServerContext *context, const rpc::AccountRequest *req,
+grpc::Status Service::Account(Context *context, const rpc::AccountRequest *req,
                               rpc::AccountResponse *res) {
     try {
         if (!accounts_) {
@@ -17,12 +17,12 @@ grpc::Status Service::Account(grpc::ServerContext *context, const rpc::AccountRe
         Json result;
         const auto operation = req->operation();
         if (operation == "register" || operation == "login") {
-            // 来源由网关适配请求的 socket 地址，后端 peer 合并限流，不能通过不同 operation 绕过。
+            // 只使用传输层的 peer；请求体 source 不可信，不能用于绕过限流。
             auto peer = context->peer();
             const auto last = peer.rfind(':');
             if (last != std::string::npos)
                 peer.resize(last);
-            accounts_->Limit(peer + ":" + req->source().substr(0, 256));
+            accounts_->Limit(peer);
             result = operation == "register" ? accounts_->Register(body) : accounts_->Login(body);
             result["ttl_seconds"] = accounts_->ttl();
             result["enabled"] = true;

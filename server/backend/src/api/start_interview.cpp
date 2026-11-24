@@ -3,9 +3,8 @@
 #include <stdexcept>
 namespace backend::api {
 namespace rpc = aiinterview::v1;
-grpc::Status Service::StartInterview(grpc::ServerContext *context,
-                                     const rpc::CreateSessionRequest *req,
-                                     grpc::ServerWriter<rpc::InterviewEvent> *writer) {
+grpc::Status Service::StartInterview(Context *context, const rpc::CreateSessionRequest *req,
+                                     Writer<rpc::InterviewEvent> *writer) {
     std::string owner;
     try {
         owner = User(context);

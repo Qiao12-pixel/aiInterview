@@ -1,0 +1,22 @@
+{
+  "cluster": {
+    "instance_id": "node-a",
+    "advertised_address": "127.0.0.1:50051",
+    "zookeeper": {
+      "enabled": true,
+      "hosts": "127.0.0.1:2181",
+      "path": "/aiinterview/backends"
+    }
+  },
+  "rabbitmq": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 5672,
+    "vhost": "/",
+    "user": "guest",
+    "password": "guest",
+    "exchange": "aiinterview.events",
+    "queue": "aiinterview.report.completed",
+    "routing_key": "report.completed"
+  }
+}

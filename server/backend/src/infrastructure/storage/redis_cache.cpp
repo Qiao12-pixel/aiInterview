@@ -1,5 +1,6 @@
 #include "infrastructure/storage/redis_cache.h"
 #include <hiredis/hiredis.h>
+#include "infrastructure/storage/pools.h"
 #include <memory>
 namespace backend::storage {
 namespace {
@@ -21,20 +22,13 @@ std::optional<std::string> CacheReport(const nlohmann::json &config, const std::
 
     if (!config.value("enabled", true))
         return {};
-    const auto host = config.value("host", std::string("127.0.0.1"));
-    timeval timeout{1, 0};
-    std::unique_ptr<redisContext, RedisDelete> ctx(
-        redisConnectWithTimeout(host.c_str(), config.value("port", 6379), timeout));
-    if (!ctx || ctx->err)
+    std::optional<Pool<redisContext>::Lease> connection;
+    try {
+        connection.emplace(RedisPool(config)->Borrow());
+    } catch (...) {
         return {};
-    redisSetTimeout(ctx.get(), timeout);
-    const auto password = config.value("password", std::string{});
-    if (!password.empty()) {
-        std::unique_ptr<redisReply, ReplyDelete> auth(static_cast<redisReply *>(
-            redisCommand(ctx.get(), "AUTH %b", password.data(), password.size())));
-        if (!auth || auth->type == REDIS_REPLY_ERROR)
-            return {};
     }
+    auto &ctx = *connection;
     const auto prefix = config.value("prefix", std::string("aiinterview:report:")),
                key = prefix + id;
     std::unique_ptr<redisReply, ReplyDelete> reply(static_cast<redisReply *>(

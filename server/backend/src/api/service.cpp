@@ -12,11 +12,10 @@ grpc::Status Failure(const std::exception &e) {
 }
 } // namespace
 Service::Service(Model model, std::shared_ptr<ReportStore> reports, IdentityResolver identity,
-                 std::shared_ptr<accounts::Service> accounts)
-    : engine_(std::move(model), std::move(reports)), identity_(std::move(identity)),
-      accounts_(std::move(accounts)) {}
-grpc::Status Service::CreateSession(grpc::ServerContext *context,
-                                    const rpc::CreateSessionRequest *req,
+                 std::shared_ptr<accounts::Service> accounts, std::string instanceId)
+    : engine_(std::move(model), std::move(reports), std::move(instanceId)),
+      identity_(std::move(identity)), accounts_(std::move(accounts)) {}
+grpc::Status Service::CreateSession(Context *context, const rpc::CreateSessionRequest *req,
                                     rpc::CreateSessionResponse *res) {
     std::string owner;
     try {
@@ -44,8 +43,8 @@ grpc::Status Service::CreateSession(grpc::ServerContext *context,
         return Failure(e);
     }
 }
-grpc::Status Service::SendText(grpc::ServerContext *context, const rpc::TextMessage *req,
-                               grpc::ServerWriter<rpc::InterviewEvent> *writer) {
+grpc::Status Service::SendText(Context *context, const rpc::TextMessage *req,
+                               Writer<rpc::InterviewEvent> *writer) {
     std::string user;
     try {
         user = User(context);
@@ -75,21 +74,16 @@ grpc::Status Service::SendText(grpc::ServerContext *context, const rpc::TextMess
             if (!writer->Write(out))
                 throw std::runtime_error("客户端已断开，生成中止");
         };
-        if (req->video_jpeg().size() > 512 * 1024 ||
-            (!req->video_jpeg().empty() &&
-             (req->video_jpeg().size() < 2 ||
-              static_cast<unsigned char>(req->video_jpeg()[0]) != 0xff ||
-              static_cast<unsigned char>(req->video_jpeg()[1]) != 0xd8)))
-            throw std::invalid_argument("视频画面必须为不超过 512 KiB 的 JPEG");
-        const auto frame = common::Base64(req->video_jpeg());
-        for (const auto &event : engine_.Answer(*s, req->text(), write, frame))
+        if (!req->video_jpeg().empty())
+            throw std::invalid_argument("视频输入已停用");
+        for (const auto &event : engine_.Answer(*s, req->text(), write))
             write(event);
         return grpc::Status::OK;
     } catch (const std::exception &e) {
         return Failure(e);
     }
 }
-grpc::Status Service::GetReport(grpc::ServerContext *context, const rpc::ReportRequest *req,
+grpc::Status Service::GetReport(Context *context, const rpc::ReportRequest *req,
                                 rpc::ReportResponse *res) {
     try {
         const auto user = User(context);
@@ -105,7 +99,7 @@ grpc::Status Service::GetReport(grpc::ServerContext *context, const rpc::ReportR
         return Failure(e);
     }
 }
-grpc::Status Service::ListReports(grpc::ServerContext *context, const rpc::ListReportsRequest *req,
+grpc::Status Service::ListReports(Context *context, const rpc::ListReportsRequest *req,
                                   rpc::ListReportsResponse *res) {
     try {
         const auto user = User(context);
@@ -119,7 +113,7 @@ grpc::Status Service::ListReports(grpc::ServerContext *context, const rpc::ListR
         return {grpc::StatusCode::UNAVAILABLE, e.what()};
     }
 }
-std::string Service::User(grpc::ServerContext *context) {
+std::string Service::User(Context *context) {
     if (!identity_)
         return {};
     const auto it = context->client_metadata().find("authorization");
