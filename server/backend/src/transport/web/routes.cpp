@@ -44,7 +44,10 @@ void Session::Run() {
         return;
     }
     if (target == "/healthz") {
-        Reply(200, "{\"ok\":true,\"transport\":\"grpc-web\"}");
+        auto health = service.ClusterStatus();
+        health["ok"] = true;
+        health["transport"] = "grpc-web";
+        Reply(200, health.dump());
         return;
     }
     if (target == "/api/account/native-login" || target == "/api/account/native-register") {

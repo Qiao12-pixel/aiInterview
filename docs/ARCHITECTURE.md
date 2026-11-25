@@ -10,7 +10,7 @@ Web ──gRPC-Web──────────┘                             
                                                         └─ MySQL outbox → RabbitMQ → 报告任务
 ```
 
-transport/web 仅处理 HTTP、gRPC-Web framing、Cookie 和静态资源，直接调用同进程 api::Service，不建立本机 gRPC client 连接。api/native.cpp 将原生 gRPC 上下文适配成相同服务接口。账号模块负责验证、scrypt、登录态和限流，应用层负责出题、追问、评分及报告。
+transport/web 仅处理 HTTP、gRPC-Web framing、Cookie 和静态资源，直接调用同进程 api::Service，不建立本机 gRPC client 连接。启用集群后，服务入口通过统一路由策略选择执行实例；目标是自身则本地执行，否则使用原生 gRPC 转发到目标实例一次。api/native.cpp 将原生 gRPC 上下文适配成相同服务接口。账号模块负责验证、scrypt、登录态和限流，应用层负责出题、追问、评分及报告。
 
 ## 流式输出
 
@@ -28,6 +28,12 @@ StartInterview / SendText 是服务端流。浏览器上传 protobuf 二进制�
 
 ## 多实例边界
 
-ZooKeeper 后端注册发现和 RabbitMQ 任务继续保留。原来依赖网关的轮询与实例前缀路由已随网关移除；浏览器不会自动从 ZooKeeper 选择后端。当前每个网页入口直接绑定一个实例。多实例统一入口需由部署层提供支持 gRPC-Web 的 HTTP 负载均衡及会话亲和；仅共享数据库不意味着活跃会话可跨实例回答，不能随机重试。
+ZooKeeper 临时节点发布实例 ID 与原生 gRPC 地址，约每秒读取成员快照；断线清空快照、会话过期重新注册。`infrastructure/cluster/Router` 对新会话按排序后的成员列表轮询，`api/routing` 将请求交给目标实例。Qt 原生 gRPC 和 Web gRPC-Web 复用此策略，客户端可连接任意一个后端入口，无独立网关。
+
+会话 ID 为 instance_id + 随机值，回答固定路由到原实例。跨实例请求携带原始 Authorization，目标仍校验账号和会话归属；内部跳数标记防止递归转发，原生调用 deadline/取消向下游传播。一个业务请求最多发往一个执行实例，禁用内部 gRPC 自动重试；UNAVAILABLE 后该地址短暂冷却 2 秒，注册节点删除后从候选集移除。不存在可用快照时拒绝创建，不使用失效快照猜测目标。
+
+账号、历史和最终报告在入口本地处理，使用共享 MySQL/Redis，不需要随活跃会话路由。正在进行的会话仍在内存，所属节点宕机后不能迁移；已持久化报告可从其他入口查询。每个入口有独立轮询游标，不承诺全局严格等量或按实时 CPU 加权。ZooKeeper 是控制面的成员发现，不承载业务请求。
+
+任意后端都能作为统一业务入口，但固定入口本身宕机时客户端连接仍会失败；公网域名高可用需要部署层 TCP/HTTP 入口或客户端备用地址。部署层无需再实现会话粘滞，因为应用层会根据会话 ID 找到原实例。服务间默认明文 gRPC 仅适用于可信私网，本轮未实现 mTLS。
 
 目录详见 PROJECT_STRUCTURE.md，启动详见 ../startup.md，协议详见 GRPC_WEB_API.md。

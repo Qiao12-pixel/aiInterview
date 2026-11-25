@@ -104,9 +104,22 @@ class Registry::Impl {
                             continue;
                         const auto json =
                             nlohmann::json::parse(std::string(buffer, size), nullptr, false);
+                        Stat stat{};
+                        if (zoo_exists(handle, path.c_str(), 0, &stat) != ZOK ||
+                            !stat.ephemeralOwner)
+                            continue;
                         if (json.is_object() && json.contains("id") && json["id"].is_string() &&
-                            json.contains("address") && json["address"].is_string())
-                            next.push_back({json["id"], json["address"]});
+                            json.contains("address") && json["address"].is_string()) {
+                            const auto id = json["id"].get<std::string>(),
+                                       address = json["address"].get<std::string>();
+                            if (id != children.data[i] || id.empty() || id.size() > 48 ||
+                                id.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRS"
+                                                     "TUVWXYZ0123456789-") != std::string::npos ||
+                                address.empty() || address.size() > 256 ||
+                                address.find(':') == std::string::npos)
+                                continue;
+                            next.push_back({id, address});
+                        }
                     }
                     deallocate_String_vector(&children);
                 }

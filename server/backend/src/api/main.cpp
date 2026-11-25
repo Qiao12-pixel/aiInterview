@@ -62,6 +62,18 @@ int main(int argc, char **argv) {
                                       accounts, instance);
         std::cout << "Report storage: "
                   << (reports ? "MySQL + Redis cache" : "memory (not persistent)") << std::endl;
+        std::shared_ptr<discovery::Registry> registration;
+        const auto zk = cluster.value("zookeeper", nlohmann::json::object());
+        if (zk.value("enabled", false)) {
+            if (instance.empty())
+                throw std::runtime_error("启用注册发现必须配置 instance_id");
+            registration = std::make_shared<discovery::Registry>(
+                zk.value("hosts", std::string("127.0.0.1:2181")),
+                zk.value("path", std::string("/aiinterview/backends")),
+                discovery::Endpoint{instance, cluster.at("advertised_address")});
+            service.SetRouter(std::make_shared<backend::cluster::Router>(
+                instance, [registration] { return registration->Snapshot(); }));
+        }
         grpc::ServerBuilder builder;
         builder.SetMaxReceiveMessageSize(6 * 1024 * 1024);
         builder.AddListeningPort(address, grpc::InsecureServerCredentials());
@@ -71,16 +83,6 @@ int main(int argc, char **argv) {
             throw std::runtime_error("服务监听失败");
         std::cout << "Interview gRPC listening on " << address << (mock ? " [MOCK]" : "")
                   << std::endl;
-        std::unique_ptr<discovery::Registry> registration;
-        const auto zk = cluster.value("zookeeper", nlohmann::json::object());
-        if (zk.value("enabled", false)) {
-            if (instance.empty())
-                throw std::runtime_error("启用注册发现必须配置 instance_id");
-            registration = std::make_unique<discovery::Registry>(
-                zk.value("hosts", std::string("127.0.0.1:2181")),
-                zk.value("path", std::string("/aiinterview/backends")),
-                discovery::Endpoint{instance, cluster.at("advertised_address")});
-        }
         backend::web::Server web(service, web_address, web_root);
         std::cout << "Web + gRPC-Web listening on " << web_address << std::endl;
         server->Wait();

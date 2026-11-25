@@ -6,7 +6,7 @@
 - `web/`：HTML/CSS/JavaScript 网页，通过 gRPC-Web 直接调用业务后端；不访问数据库和模型。
 - `server/backend/`：唯一业务后端。`api/` 暴露原生 gRPC 与可复用服务接口；`transport/web/` 处理 gRPC-Web 帧、Cookie 和静态文件；`application/` 决定面试流程；`ports/` 隔离外部能力；`infrastructure/` 实现存储、模型、PDF、MQ。不得依赖 Qt UI。
 - 不再创建独立 gateway 进程、WebSocket 转发或浏览器 SSE 适配层。模型上游 SSE 位于 infrastructure/llm/stream.cpp。
-- `server/discovery/`：ZooKeeper 注册发现基础设施。浏览器不直接访问 ZooKeeper。
+- `server/discovery/`：ZooKeeper 注册发现基础设施。浏览器不直接访问 ZooKeeper。server/backend/src/infrastructure/cluster 负责成员选择和连接复用，api/routing 负责一次跨实例 RPC 分发；不得恢复独立网关，不得重试已提交的回答。
 - `server/config/`：私有配置，禁止提交真实 Key、数据库密码、个人路径和简历。
 - `proto/`：跨端契约，修改后同步 C++ 和 web/src/rpc/protobuf.js 的字段映射与测试。
 - `docs/`：架构、API 和启动文档。目录边界改变时同步 docs/ARCHITECTURE.md。

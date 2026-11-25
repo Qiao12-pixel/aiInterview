@@ -5,6 +5,7 @@ namespace {
 Context Adapt(grpc::ServerContext *source) {
     Context c;
     c.source = source->peer();
+    c.deadline = source->deadline();
     c.cancelled = [source] { return source->IsCancelled(); };
     for (const auto &item : source->client_metadata())
         c.metadata.emplace(std::string(item.first.data(), item.first.size()),

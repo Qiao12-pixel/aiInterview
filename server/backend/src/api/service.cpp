@@ -1,4 +1,5 @@
 #include "api/service.h"
+#include "api/routing.h"
 #include "infrastructure/pdf_parser.h"
 #include "common/base64.h"
 #include <stdexcept>
@@ -17,6 +18,8 @@ Service::Service(Model model, std::shared_ptr<ReportStore> reports, IdentityReso
       identity_(std::move(identity)), accounts_(std::move(accounts)) {}
 grpc::Status Service::CreateSession(Context *context, const rpc::CreateSessionRequest *req,
                                     rpc::CreateSessionResponse *res) {
+    if (auto routed = RouteCreate(router_.get(), context, req, res))
+        return *routed;
     std::string owner;
     try {
         owner = User(context);
@@ -45,6 +48,8 @@ grpc::Status Service::CreateSession(Context *context, const rpc::CreateSessionRe
 }
 grpc::Status Service::SendText(Context *context, const rpc::TextMessage *req,
                                Writer<rpc::InterviewEvent> *writer) {
+    if (auto routed = RouteAnswer(router_.get(), context, req, writer))
+        return *routed;
     std::string user;
     try {
         user = User(context);

@@ -1,10 +1,13 @@
 #include "api/service.h"
+#include "api/routing.h"
 #include "infrastructure/pdf_parser.h"
 #include <stdexcept>
 namespace backend::api {
 namespace rpc = aiinterview::v1;
 grpc::Status Service::StartInterview(Context *context, const rpc::CreateSessionRequest *req,
                                      Writer<rpc::InterviewEvent> *writer) {
+    if (auto routed = RouteStart(router_.get(), context, req, writer))
+        return *routed;
     std::string owner;
     try {
         owner = User(context);
