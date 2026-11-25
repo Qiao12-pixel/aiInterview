@@ -19,3 +19,5 @@
 请求体最多 6 MiB，PDF 最多 5 MiB/20 页，回答最多 32000 字节；账号 JSON 最多 16 KiB。视频字段仍保留旧 wire 编号以兼容既有契约，但 SendText 拒绝视频内容，StreamAudio/StreamVideo 未实现。语音由浏览器转写，再提交文本。
 
 过载返回 HTTP 503 / Retry-After；业务错误使用 gRPC trailer code。生产需通过 TLS 入口部署，并设置 INTERVIEW_SECURE_COOKIE=1 给登录 Cookie 添加 Secure；本机默认明文仅监听回环地址。
+
+启用 ZooKeeper 集群时，客户端 URL 和协议不变。任意后端入口对新会话轮询分配执行实例；SendText 根据 session_id 前缀找到原实例，跨实例仍保留事件流和原用户校验。失败不自动重放，详见 CLUSTER.md。

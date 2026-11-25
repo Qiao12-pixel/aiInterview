@@ -1,5 +1,9 @@
 # 压测后升级与复测 · 2026-11-24
 
+并发160时59.7%失败率的统计、证据与解决方法见 [故障分析](FAILURE_ANALYSIS.md)。
+
+后续已补齐后端内置 ZooKeeper 轮询及会话亲和，见 [集群路由验证](CLUSTER_ROUTING.md)。下文记录移除网关时的升级阶段。
+
 原始报告 REPORT.md 和原始 JSON 保留，代表旧网关架构。本轮移除独立网关，使用后端内置 gRPC-Web；复测结果见 [upgrade-results.json](upgrade-results.json)。
 
 ## 已落地

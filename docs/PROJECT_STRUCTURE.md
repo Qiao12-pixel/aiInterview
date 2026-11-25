@@ -7,7 +7,7 @@ web/                       网页，无需打包
   src/                     会话、历史、账号、简历和语音 UI
 server/
   backend/src/
-    api/                   统一服务接口与原生 gRPC 适配
+    api/                   统一服务接口、原生 gRPC 适配及跨实例 RPC 分发
     transport/web/         server/http/routes/accounts/rpc/static_files 分开实现
     application/           面试流程、回答、报告
     domain/                会话领域数据
@@ -15,6 +15,7 @@ server/
     accounts/              注册、登录、密码及账号仓储
     infrastructure/
       llm/                 火山模型 HTTP / 上游 SSE
+      cluster/             ZooKeeper 成员选择、轮询与会话亲和
       database/            C++ 自动建库建表
       storage/             MySQL/Redis 连接池、报告及缓存
       messaging/           RabbitMQ、报告文档

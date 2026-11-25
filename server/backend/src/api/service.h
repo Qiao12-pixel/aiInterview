@@ -5,10 +5,13 @@
 #include "accounts/service.h"
 #include <map>
 #include <functional>
+#include <optional>
+#include "infrastructure/cluster/router.h"
 namespace backend::api {
 struct Context {
     std::map<std::string, std::string> metadata;
     std::string source;
+    std::chrono::system_clock::time_point deadline = std::chrono::system_clock::time_point::max();
     std::function<bool()> cancelled = [] { return false; };
     const auto &client_metadata() const { return metadata; }
     std::string peer() const { return source; }
@@ -23,6 +26,16 @@ class Service final : public aiinterview::v1::InterviewService::Service {
     explicit Service(Model model, std::shared_ptr<ReportStore> reports = {},
                      IdentityResolver identity = {},
                      std::shared_ptr<accounts::Service> accounts = {}, std::string instanceId = {});
+    Json ClusterStatus() const {
+        if (!router_)
+            return {{"cluster_enabled", false}, {"ready", true}};
+        auto members = router_->Members();
+        return {{"cluster_enabled", true},
+                {"instance_id", router_->self()},
+                {"members", members},
+                {"ready", !members.empty()}};
+    }
+    void SetRouter(std::shared_ptr<cluster::Router> router) { router_ = std::move(router); }
     grpc::Status Account(grpc::ServerContext *, const aiinterview::v1::AccountRequest *,
                          aiinterview::v1::AccountResponse *) override;
     grpc::Status CreateSession(grpc::ServerContext *, const aiinterview::v1::CreateSessionRequest *,
@@ -52,6 +65,7 @@ class Service final : public aiinterview::v1::InterviewService::Service {
 
   private:
     Engine engine_;
+    std::shared_ptr<cluster::Router> router_;
     IdentityResolver identity_;
     std::shared_ptr<accounts::Service> accounts_;
     std::string User(Context *context);

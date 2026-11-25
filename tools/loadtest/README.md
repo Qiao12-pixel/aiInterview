@@ -18,3 +18,13 @@ python3 -u tools/loadtest/run_upgrade.py \
 短时同机测量不能替代长期稳定性或真实 LLM 容量；出现过载按 HTTP 503 统计，不自动重试。默认32工作线程、最多256处理/排队请求，空闲HTTP连接异步等待且有读超时。
 
 旧 run_local.py / read_connections.py 随网关移除，不再适用；旧报告原始结果保留，升级对比以同机/同模型的完整流程为口径。当前脚本不复测旧网关双实例轮询，也不包含 RabbitMQ 任务吞吐；MQ 旧结果不可直接当作本轮复测。
+
+## ZooKeeper 双实例路由回归
+
+```bash
+python3 tools/loadtest/cluster_integration.py \
+  --backend ./build/bench-server/interview_server \
+  --grpc-bench ./build/loadtest/grpc_loadtest
+```
+
+额外需要本机 ZooKeeper 2181；脚本创建随机注册路径并启动两个独立后端，验证 Web 和原生 gRPC 轮询、跨入口回答、强制停止节点后真实发现摘除、重启重新加入和持久化报告。无独立网关，不重放回答。

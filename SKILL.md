@@ -2,7 +2,7 @@
 
 1. 阅读 AGENTS.md、docs/ARCHITECTURE.md，确定变更所属模块。
 2. 界面分别放 client/ 和 web/；业务全部放 server/backend/，不新增独立网关。
-3. Qt 使用原生 gRPC，浏览器使用后端内置的 gRPC-Web。两种传输调用同一个 api::Service，与 application/Engine 共用业务逻辑，不经本机 gRPC 再转发。
+3. Qt 使用原生 gRPC，浏览器使用后端内置的 gRPC-Web。两种传输调用同一个 api::Service，与 application/Engine 共用业务逻辑，不经本机 gRPC 再转发。启用集群时新会话通过 ZooKeeper 快照轮询，回答按实例前缀亲和；仅远端执行节点使用一次原生 gRPC 调用，禁止递归转发和自动重试。
 4. 协议调整同步 proto/、C++、web/src/rpc/。目前保留文本与浏览器语音转写，不提供视频和 WebSocket。
 5. 外部依赖通过 ports/ 隔离，具体实现位于 infrastructure/；头文件与实现同目录。
 6. 使用 RAII，连接池与网络工作队列有界；耗时业务不阻塞 HTTP I/O 线程。不重试已提交的回答。

@@ -1,0 +1,15 @@
+{
+  "round_robin": {
+    "node-0": 6,
+    "node-1": 6
+  },
+  "cross_entry_completed": 12,
+  "native_completed": 12,
+  "native_distribution": {
+    "node-0": "6",
+    "node-1": "6"
+  },
+  "owner_failure_rejected": true,
+  "node_restart_rejoined": true,
+  "persisted_report_after_restart": true
+}
